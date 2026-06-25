@@ -42,7 +42,7 @@ dependencies:
   ffmpeg_kit_flutter_new:
 
   # Video player
-  better_player:
+  better_player_plus:
 
   # File & Storage
   path_provider:

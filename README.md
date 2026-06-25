@@ -104,7 +104,7 @@ lib/
 - **Networking:** `dio` with custom interceptors
 - **Local Database:** `isar` & `isar_flutter_libs`
 - **Media Processing:** `ffmpeg_kit_flutter_new`
-- **Video Player:** `better_player`
+- **Video Player:** `better_player_plus`
 
 ### Utilities & UI Packages
 - `receive_sharing_intent` — Deep links & Android Share intents.
