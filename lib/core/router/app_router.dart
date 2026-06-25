@@ -9,6 +9,7 @@ import 'package:mdm/features/downloader/domain/usecases/fetch_metadata_usecase.d
 import 'package:mdm/features/downloader/presentation/bloc/metadata_bloc.dart';
 import 'package:mdm/features/downloader/presentation/pages/metadata_page.dart';
 import 'package:mdm/features/downloader/presentation/pages/quality_selection_page.dart';
+import 'package:mdm/features/downloads/presentation/pages/downloads_page.dart';
 
 // >>> App Router =======================
 // GoRouter configuration with all application routes
@@ -59,7 +60,7 @@ class AppRouter {
       GoRoute(
         path: RouteConstants.downloads,
         name: 'downloads',
-        builder: (context, state) => const _StubPage(name: 'Downloads'),
+        builder: (context, state) => const DownloadsPage(),
       ),
 
       // Player route
