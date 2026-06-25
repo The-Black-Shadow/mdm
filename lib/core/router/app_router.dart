@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:mdm/core/constants/route_constants.dart';
+import 'package:mdm/core/di/injection.dart';
+import 'package:mdm/features/downloader/domain/entities/video_metadata.dart';
+import 'package:mdm/features/downloader/domain/usecases/fetch_metadata_usecase.dart';
+import 'package:mdm/features/downloader/presentation/bloc/metadata_bloc.dart';
+import 'package:mdm/features/downloader/presentation/pages/metadata_page.dart';
+import 'package:mdm/features/downloader/presentation/pages/quality_selection_page.dart';
 
 // >>> App Router =======================
 // GoRouter configuration with all application routes
@@ -24,16 +31,28 @@ class AppRouter {
         name: 'metadata',
         builder: (context, state) {
           final url = state.extra as String? ?? '';
-          return _StubPage(name: 'Metadata', subtitle: url);
+          return BlocProvider(
+            create: (_) => MetadataBloc(
+              fetchMetadataUseCase: getIt<FetchMetadataUseCase>(),
+            )..add(FetchMetadataEvent(url: url)),
+            child: const MetadataPage(),
+          );
         },
       ),
 
-      // Quality selection route
+      // Quality selection route — receives metadata + audioOnly flag via extra
       GoRoute(
         path: RouteConstants.qualitySelection,
         name: 'qualitySelection',
-        builder: (context, state) =>
-            const _StubPage(name: 'Quality Selection'),
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>? ?? {};
+          final metadata = extra['metadata'] as VideoMetadata;
+          final audioOnly = extra['audioOnly'] as bool? ?? false;
+          return QualitySelectionPage(
+            metadata: metadata,
+            initialAudioOnly: audioOnly,
+          );
+        },
       ),
 
       // Downloads route
@@ -86,9 +105,8 @@ class AppRouter {
 // Temporary placeholder page shown until feature pages are built
 class _StubPage extends StatelessWidget {
   final String name;
-  final String? subtitle;
 
-  const _StubPage({required this.name, this.subtitle});
+  const _StubPage({required this.name});
 
   @override
   Widget build(BuildContext context) {
@@ -100,34 +118,19 @@ class _StubPage extends StatelessWidget {
           children: [
             Icon(Icons.construction, size: 64, color: Colors.grey[400]),
             const SizedBox(height: 16),
-            Text(
-              name,
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
+            Text(name, style: Theme.of(context).textTheme.headlineMedium),
             const SizedBox(height: 8),
             Text(
               'Coming soon',
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Colors.grey[600],
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyLarge?.copyWith(color: Colors.grey[600]),
             ),
-            if (subtitle != null && subtitle!.isNotEmpty) ...[
-              const SizedBox(height: 16),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
-                child: Text(
-                  subtitle!,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.grey[500],
-                      ),
-                ),
-              ),
-            ],
           ],
         ),
       ),
     );
   }
 }
+
 // <<< Stub Page =======================
