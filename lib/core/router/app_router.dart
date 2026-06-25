@@ -13,6 +13,8 @@ import 'package:mdm/features/downloads/presentation/pages/downloads_page.dart';
 import 'package:mdm/features/history/presentation/pages/favorites_page.dart';
 import 'package:mdm/features/history/presentation/pages/history_page.dart';
 import 'package:mdm/features/history/presentation/pages/search_page.dart';
+import 'package:mdm/features/home/presentation/pages/home_page.dart';
+import 'package:mdm/features/player/presentation/pages/player_page.dart';
 
 // >>> App Router =======================
 // GoRouter configuration with all application routes
@@ -26,7 +28,7 @@ class AppRouter {
       GoRoute(
         path: RouteConstants.home,
         name: 'home',
-        builder: (context, state) => const _StubPage(name: 'Home'),
+        builder: (context, state) => const HomePage(),
       ),
 
       // Metadata route — receives YouTube URL via extra
@@ -70,7 +72,10 @@ class AppRouter {
       GoRoute(
         path: RouteConstants.player,
         name: 'player',
-        builder: (context, state) => const _StubPage(name: 'Player'),
+        builder: (context, state) {
+          final filePath = state.extra as String? ?? '';
+          return PlayerPage(filePath: filePath);
+        },
       ),
 
       // History route

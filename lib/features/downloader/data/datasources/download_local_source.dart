@@ -48,6 +48,18 @@ class DownloadLocalSource {
     }
   }
 
+  Stream<List<DownloadTask>> watchAllTasks() {
+    final box = Hive.box<DownloadTaskSchema>(HiveModule.downloadTaskBox);
+    // Yield current values first, then listen to changes
+    return Stream.multi((controller) {
+      controller.add(box.values.map(_mapToDomain).toList());
+      final sub = box.watch().listen((_) {
+        controller.add(box.values.map(_mapToDomain).toList());
+      });
+      controller.onCancel = () => sub.cancel();
+    });
+  }
+
   Future<void> deleteTask(String id) async {
     try {
       final box = Hive.box<DownloadTaskSchema>(HiveModule.downloadTaskBox);
