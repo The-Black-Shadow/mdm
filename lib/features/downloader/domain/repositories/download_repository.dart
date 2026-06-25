@@ -6,5 +6,7 @@ abstract class DownloadRepository {
   Future<Result<void>> startDownload(DownloadTask task);
   Future<Result<void>> pauseDownload(String taskId);
   Future<Result<void>> cancelDownload(String taskId);
+  Future<Result<List<DownloadTask>>> getAllTasks();
+  Stream<List<DownloadTask>> watchAllTasks();
 }
 // <<< DownloadRepository =======================

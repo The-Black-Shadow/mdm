@@ -64,5 +64,23 @@ class DownloadRepositoryImpl implements DownloadRepository {
       );
     }
   }
+
+  @override
+  Future<Result<List<DownloadTask>>> getAllTasks() async {
+    try {
+      final tasks = await _localSource.getAllTasks();
+      return Result.success(tasks);
+    } catch (e, stackTrace) {
+      AppLogger.e('Failed to get all tasks', e, stackTrace);
+      return Result.failure(
+        AppException.unknown('Failed to get all tasks: $e'),
+      );
+    }
+  }
+
+  @override
+  Stream<List<DownloadTask>> watchAllTasks() {
+    return _localSource.watchAllTasks();
+  }
 }
 // <<< DownloadRepositoryImpl =======================

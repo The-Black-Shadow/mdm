@@ -49,6 +49,7 @@ import '../../features/history/presentation/cubit/favorites_cubit.dart'
     as _i602;
 import '../../features/history/presentation/cubit/history_cubit.dart' as _i232;
 import '../../features/history/presentation/cubit/search_cubit.dart' as _i576;
+import '../../features/home/presentation/cubit/home_cubit.dart' as _i9;
 import '../network/dio_client.dart' as _i667;
 import '../services/clipboard_service.dart' as _i235;
 import '../services/connectivity_service.dart' as _i47;
@@ -118,6 +119,13 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i63.DownloadRepositoryImpl(
         gh<_i631.DownloadLocalSource>(),
         gh<_i402.DownloadQueueManager>(),
+      ),
+    );
+    gh.factory<_i9.HomeCubit>(
+      () => _i9.HomeCubit(
+        gh<_i142.HistoryRepository>(),
+        gh<_i621.DownloadRepository>(),
+        gh<_i235.ClipboardService>(),
       ),
     );
     gh.factory<_i778.CancelDownloadUseCase>(
