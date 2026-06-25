@@ -1,9 +1,11 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:injectable/injectable.dart';
 
 import 'package:mdm/core/utils/app_logger.dart';
 
 // >>> NotificationService =======================
 // Manages local notifications for download progress, completion, and warnings
+@lazySingleton
 class NotificationService {
   final FlutterLocalNotificationsPlugin _plugin =
       FlutterLocalNotificationsPlugin();
