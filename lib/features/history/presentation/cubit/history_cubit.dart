@@ -1,7 +1,6 @@
 // >>> HistoryCubit =======================
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import 'package:mdm/core/utils/app_logger.dart';
 import 'package:mdm/features/history/domain/entities/history_entry.dart';
 import 'package:mdm/features/history/domain/repositories/history_repository.dart';
 import 'package:mdm/features/history/presentation/cubit/history_state.dart';

@@ -50,8 +50,10 @@ import '../../features/history/presentation/cubit/favorites_cubit.dart'
 import '../../features/history/presentation/cubit/history_cubit.dart' as _i232;
 import '../../features/history/presentation/cubit/search_cubit.dart' as _i576;
 import '../network/dio_client.dart' as _i667;
+import '../services/clipboard_service.dart' as _i235;
 import '../services/connectivity_service.dart' as _i47;
 import '../services/notification_service.dart' as _i941;
+import '../services/permission_service.dart' as _i165;
 
 extension GetItInjectableX on _i174.GetIt {
   // initializes the registration of main-scope dependencies inside of GetIt
@@ -67,6 +69,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i941.NotificationService>(
       () => _i941.NotificationService(),
     );
+    gh.lazySingleton<_i165.PermissionService>(() => _i165.PermissionService());
     gh.lazySingleton<_i631.DownloadLocalSource>(
       () => _i631.DownloadLocalSource(),
     );
@@ -86,8 +89,14 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i1034.FetchMetadataUseCase>(
       () => _i1034.FetchMetadataUseCase(gh<_i370.MetadataRepository>()),
     );
+    gh.lazySingleton<_i235.ClipboardService>(
+      () => _i235.ClipboardService(gh<_i142.HistoryRepository>()),
+    );
     gh.singleton<_i212.DownloadEngine>(
-      () => _i212.DownloadEngine(gh<_i91.MediaProcessor>()),
+      () => _i212.DownloadEngine(
+        gh<_i91.MediaProcessor>(),
+        gh<_i941.NotificationService>(),
+      ),
     );
     gh.factory<_i602.FavoritesCubit>(
       () => _i602.FavoritesCubit(gh<_i142.HistoryRepository>()),

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mdm/core/di/injection.dart';
 import 'package:mdm/core/theme/app_spacing.dart';
-import 'package:mdm/features/history/domain/entities/history_entry.dart';
 import 'package:mdm/features/history/presentation/cubit/history_cubit.dart';
 import 'package:mdm/features/history/presentation/cubit/history_state.dart';
 import 'package:mdm/features/history/presentation/widgets/history_entry_tile.dart';
