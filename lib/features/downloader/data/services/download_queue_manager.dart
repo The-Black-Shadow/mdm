@@ -7,11 +7,14 @@ import 'package:injectable/injectable.dart';
 import 'package:mdm/core/utils/app_logger.dart';
 import 'package:mdm/features/downloader/data/services/download_engine.dart';
 import 'package:mdm/features/downloader/domain/entities/download_task.dart';
+import 'package:mdm/features/history/domain/entities/history_entry.dart';
+import 'package:mdm/features/history/domain/repositories/history_repository.dart';
 import 'package:mdm/shared/enums/download_status.dart';
 
 @singleton
 class DownloadQueueManager {
   final DownloadEngine _downloadEngine;
+  final HistoryRepository _historyRepository;
   final int _maxConcurrentDownloads = 2;
 
   final Queue<DownloadTask> _queue = Queue<DownloadTask>();
@@ -25,11 +28,14 @@ class DownloadQueueManager {
 
   Stream<DownloadTask> get taskUpdateStream => _taskUpdateController.stream;
 
-  DownloadQueueManager(this._downloadEngine) {
+  DownloadQueueManager(this._downloadEngine, this._historyRepository) {
     _progressSubscription = _downloadEngine.progressStream.listen((task) {
       if (task.status == DownloadStatus.completed ||
           task.status == DownloadStatus.failed ||
           task.status == DownloadStatus.paused) {
+        if (task.status == DownloadStatus.completed) {
+          _addToHistory(task);
+        }
         _activeDownloads.remove(task.id);
         _processQueue();
       } else {
@@ -85,6 +91,22 @@ class DownloadQueueManager {
       _activeDownloads[task.id] = task;
       _downloadEngine.start(task);
     }
+  }
+
+  void _addToHistory(DownloadTask task) {
+    // Determine resolution to show (or audio tag)
+    final res = task.extractAudio ? 'Audio' : (task.selectedStream.resolution ?? 'Video');
+    final entry = HistoryEntry(
+      videoId: task.videoId,
+      title: task.title,
+      channelName: task.channelName,
+      thumbnailUrl: task.thumbnailUrl,
+      filePath: task.outputPath,
+      fileSizeBytes: task.selectedStream.estimatedSizeBytes ?? 0,
+      resolution: res,
+      downloadedAt: DateTime.now(),
+    );
+    _historyRepository.addEntry(entry);
   }
 
   @disposeMethod

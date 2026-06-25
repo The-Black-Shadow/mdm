@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$StreamInfoModel {
 
- String get itag; String get type; String? get resolution; int? get fps; String get codec; String get container; int? get bitrate; int? get estimatedSizeBytes; bool get requiresMerge;
+ String get itag; String get url; String get type; String? get resolution; int? get fps; String get codec; String get container; int? get bitrate; int? get estimatedSizeBytes; bool get requiresMerge;
 /// Create a copy of StreamInfoModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $StreamInfoModelCopyWith<StreamInfoModel> get copyWith => _$StreamInfoModelCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is StreamInfoModel&&(identical(other.itag, itag) || other.itag == itag)&&(identical(other.type, type) || other.type == type)&&(identical(other.resolution, resolution) || other.resolution == resolution)&&(identical(other.fps, fps) || other.fps == fps)&&(identical(other.codec, codec) || other.codec == codec)&&(identical(other.container, container) || other.container == container)&&(identical(other.bitrate, bitrate) || other.bitrate == bitrate)&&(identical(other.estimatedSizeBytes, estimatedSizeBytes) || other.estimatedSizeBytes == estimatedSizeBytes)&&(identical(other.requiresMerge, requiresMerge) || other.requiresMerge == requiresMerge));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is StreamInfoModel&&(identical(other.itag, itag) || other.itag == itag)&&(identical(other.url, url) || other.url == url)&&(identical(other.type, type) || other.type == type)&&(identical(other.resolution, resolution) || other.resolution == resolution)&&(identical(other.fps, fps) || other.fps == fps)&&(identical(other.codec, codec) || other.codec == codec)&&(identical(other.container, container) || other.container == container)&&(identical(other.bitrate, bitrate) || other.bitrate == bitrate)&&(identical(other.estimatedSizeBytes, estimatedSizeBytes) || other.estimatedSizeBytes == estimatedSizeBytes)&&(identical(other.requiresMerge, requiresMerge) || other.requiresMerge == requiresMerge));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,itag,type,resolution,fps,codec,container,bitrate,estimatedSizeBytes,requiresMerge);
+int get hashCode => Object.hash(runtimeType,itag,url,type,resolution,fps,codec,container,bitrate,estimatedSizeBytes,requiresMerge);
 
 @override
 String toString() {
-  return 'StreamInfoModel(itag: $itag, type: $type, resolution: $resolution, fps: $fps, codec: $codec, container: $container, bitrate: $bitrate, estimatedSizeBytes: $estimatedSizeBytes, requiresMerge: $requiresMerge)';
+  return 'StreamInfoModel(itag: $itag, url: $url, type: $type, resolution: $resolution, fps: $fps, codec: $codec, container: $container, bitrate: $bitrate, estimatedSizeBytes: $estimatedSizeBytes, requiresMerge: $requiresMerge)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $StreamInfoModelCopyWith<$Res>  {
   factory $StreamInfoModelCopyWith(StreamInfoModel value, $Res Function(StreamInfoModel) _then) = _$StreamInfoModelCopyWithImpl;
 @useResult
 $Res call({
- String itag, String type, String? resolution, int? fps, String codec, String container, int? bitrate, int? estimatedSizeBytes, bool requiresMerge
+ String itag, String url, String type, String? resolution, int? fps, String codec, String container, int? bitrate, int? estimatedSizeBytes, bool requiresMerge
 });
 
 
@@ -65,9 +65,10 @@ class _$StreamInfoModelCopyWithImpl<$Res>
 
 /// Create a copy of StreamInfoModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? itag = null,Object? type = null,Object? resolution = freezed,Object? fps = freezed,Object? codec = null,Object? container = null,Object? bitrate = freezed,Object? estimatedSizeBytes = freezed,Object? requiresMerge = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? itag = null,Object? url = null,Object? type = null,Object? resolution = freezed,Object? fps = freezed,Object? codec = null,Object? container = null,Object? bitrate = freezed,Object? estimatedSizeBytes = freezed,Object? requiresMerge = null,}) {
   return _then(_self.copyWith(
 itag: null == itag ? _self.itag : itag // ignore: cast_nullable_to_non_nullable
+as String,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
 as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as String,resolution: freezed == resolution ? _self.resolution : resolution // ignore: cast_nullable_to_non_nullable
 as String?,fps: freezed == fps ? _self.fps : fps // ignore: cast_nullable_to_non_nullable
@@ -161,10 +162,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String itag,  String type,  String? resolution,  int? fps,  String codec,  String container,  int? bitrate,  int? estimatedSizeBytes,  bool requiresMerge)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String itag,  String url,  String type,  String? resolution,  int? fps,  String codec,  String container,  int? bitrate,  int? estimatedSizeBytes,  bool requiresMerge)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _StreamInfoModel() when $default != null:
-return $default(_that.itag,_that.type,_that.resolution,_that.fps,_that.codec,_that.container,_that.bitrate,_that.estimatedSizeBytes,_that.requiresMerge);case _:
+return $default(_that.itag,_that.url,_that.type,_that.resolution,_that.fps,_that.codec,_that.container,_that.bitrate,_that.estimatedSizeBytes,_that.requiresMerge);case _:
   return orElse();
 
 }
@@ -182,10 +183,10 @@ return $default(_that.itag,_that.type,_that.resolution,_that.fps,_that.codec,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String itag,  String type,  String? resolution,  int? fps,  String codec,  String container,  int? bitrate,  int? estimatedSizeBytes,  bool requiresMerge)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String itag,  String url,  String type,  String? resolution,  int? fps,  String codec,  String container,  int? bitrate,  int? estimatedSizeBytes,  bool requiresMerge)  $default,) {final _that = this;
 switch (_that) {
 case _StreamInfoModel():
-return $default(_that.itag,_that.type,_that.resolution,_that.fps,_that.codec,_that.container,_that.bitrate,_that.estimatedSizeBytes,_that.requiresMerge);case _:
+return $default(_that.itag,_that.url,_that.type,_that.resolution,_that.fps,_that.codec,_that.container,_that.bitrate,_that.estimatedSizeBytes,_that.requiresMerge);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -202,10 +203,10 @@ return $default(_that.itag,_that.type,_that.resolution,_that.fps,_that.codec,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String itag,  String type,  String? resolution,  int? fps,  String codec,  String container,  int? bitrate,  int? estimatedSizeBytes,  bool requiresMerge)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String itag,  String url,  String type,  String? resolution,  int? fps,  String codec,  String container,  int? bitrate,  int? estimatedSizeBytes,  bool requiresMerge)?  $default,) {final _that = this;
 switch (_that) {
 case _StreamInfoModel() when $default != null:
-return $default(_that.itag,_that.type,_that.resolution,_that.fps,_that.codec,_that.container,_that.bitrate,_that.estimatedSizeBytes,_that.requiresMerge);case _:
+return $default(_that.itag,_that.url,_that.type,_that.resolution,_that.fps,_that.codec,_that.container,_that.bitrate,_that.estimatedSizeBytes,_that.requiresMerge);case _:
   return null;
 
 }
@@ -217,10 +218,11 @@ return $default(_that.itag,_that.type,_that.resolution,_that.fps,_that.codec,_th
 @JsonSerializable()
 
 class _StreamInfoModel extends StreamInfoModel {
-  const _StreamInfoModel({required this.itag, required this.type, this.resolution, this.fps, required this.codec, required this.container, this.bitrate, this.estimatedSizeBytes, required this.requiresMerge}): super._();
+  const _StreamInfoModel({required this.itag, required this.url, required this.type, this.resolution, this.fps, required this.codec, required this.container, this.bitrate, this.estimatedSizeBytes, required this.requiresMerge}): super._();
   factory _StreamInfoModel.fromJson(Map<String, dynamic> json) => _$StreamInfoModelFromJson(json);
 
 @override final  String itag;
+@override final  String url;
 @override final  String type;
 @override final  String? resolution;
 @override final  int? fps;
@@ -243,16 +245,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _StreamInfoModel&&(identical(other.itag, itag) || other.itag == itag)&&(identical(other.type, type) || other.type == type)&&(identical(other.resolution, resolution) || other.resolution == resolution)&&(identical(other.fps, fps) || other.fps == fps)&&(identical(other.codec, codec) || other.codec == codec)&&(identical(other.container, container) || other.container == container)&&(identical(other.bitrate, bitrate) || other.bitrate == bitrate)&&(identical(other.estimatedSizeBytes, estimatedSizeBytes) || other.estimatedSizeBytes == estimatedSizeBytes)&&(identical(other.requiresMerge, requiresMerge) || other.requiresMerge == requiresMerge));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _StreamInfoModel&&(identical(other.itag, itag) || other.itag == itag)&&(identical(other.url, url) || other.url == url)&&(identical(other.type, type) || other.type == type)&&(identical(other.resolution, resolution) || other.resolution == resolution)&&(identical(other.fps, fps) || other.fps == fps)&&(identical(other.codec, codec) || other.codec == codec)&&(identical(other.container, container) || other.container == container)&&(identical(other.bitrate, bitrate) || other.bitrate == bitrate)&&(identical(other.estimatedSizeBytes, estimatedSizeBytes) || other.estimatedSizeBytes == estimatedSizeBytes)&&(identical(other.requiresMerge, requiresMerge) || other.requiresMerge == requiresMerge));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,itag,type,resolution,fps,codec,container,bitrate,estimatedSizeBytes,requiresMerge);
+int get hashCode => Object.hash(runtimeType,itag,url,type,resolution,fps,codec,container,bitrate,estimatedSizeBytes,requiresMerge);
 
 @override
 String toString() {
-  return 'StreamInfoModel(itag: $itag, type: $type, resolution: $resolution, fps: $fps, codec: $codec, container: $container, bitrate: $bitrate, estimatedSizeBytes: $estimatedSizeBytes, requiresMerge: $requiresMerge)';
+  return 'StreamInfoModel(itag: $itag, url: $url, type: $type, resolution: $resolution, fps: $fps, codec: $codec, container: $container, bitrate: $bitrate, estimatedSizeBytes: $estimatedSizeBytes, requiresMerge: $requiresMerge)';
 }
 
 
@@ -263,7 +265,7 @@ abstract mixin class _$StreamInfoModelCopyWith<$Res> implements $StreamInfoModel
   factory _$StreamInfoModelCopyWith(_StreamInfoModel value, $Res Function(_StreamInfoModel) _then) = __$StreamInfoModelCopyWithImpl;
 @override @useResult
 $Res call({
- String itag, String type, String? resolution, int? fps, String codec, String container, int? bitrate, int? estimatedSizeBytes, bool requiresMerge
+ String itag, String url, String type, String? resolution, int? fps, String codec, String container, int? bitrate, int? estimatedSizeBytes, bool requiresMerge
 });
 
 
@@ -280,9 +282,10 @@ class __$StreamInfoModelCopyWithImpl<$Res>
 
 /// Create a copy of StreamInfoModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? itag = null,Object? type = null,Object? resolution = freezed,Object? fps = freezed,Object? codec = null,Object? container = null,Object? bitrate = freezed,Object? estimatedSizeBytes = freezed,Object? requiresMerge = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? itag = null,Object? url = null,Object? type = null,Object? resolution = freezed,Object? fps = freezed,Object? codec = null,Object? container = null,Object? bitrate = freezed,Object? estimatedSizeBytes = freezed,Object? requiresMerge = null,}) {
   return _then(_StreamInfoModel(
 itag: null == itag ? _self.itag : itag // ignore: cast_nullable_to_non_nullable
+as String,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
 as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as String,resolution: freezed == resolution ? _self.resolution : resolution // ignore: cast_nullable_to_non_nullable
 as String?,fps: freezed == fps ? _self.fps : fps // ignore: cast_nullable_to_non_nullable

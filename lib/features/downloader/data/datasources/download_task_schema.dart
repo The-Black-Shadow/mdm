@@ -66,6 +66,12 @@ class DownloadTaskSchema extends HiveObject {
   @HiveField(19)
   final int? estimatedSizeBytes;
 
+  @HiveField(20)
+  final bool extractAudio;
+
+  @HiveField(21)
+  final String channelName;
+
   DownloadTaskSchema({
     required this.id,
     required this.videoId,
@@ -87,6 +93,8 @@ class DownloadTaskSchema extends HiveObject {
     required this.createdAt,
     this.completedAt,
     this.estimatedSizeBytes,
+    this.extractAudio = false,
+    this.channelName = 'Unknown Channel',
   });
 }
 // <<< DownloadTaskSchema =======================

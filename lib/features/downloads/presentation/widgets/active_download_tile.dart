@@ -102,6 +102,9 @@ class ActiveDownloadTile extends StatelessWidget {
       case DownloadStatus.failed:
         statusText = 'Failed';
         break;
+      case DownloadStatus.merging:
+        statusText = 'Merging Audio & Video...';
+        break;
       default:
         statusText = '${(task.progress * 100).toStringAsFixed(1)}%';
         if (task.speedBytesPerSecond != null && task.speedBytesPerSecond! > 0) {
