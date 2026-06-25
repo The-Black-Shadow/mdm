@@ -157,19 +157,19 @@
   - Start Download button
   - _Completed:_ —
 
-- [ ] ⬜ **2.10 Isar Schema Setup**
-  - `DownloadTaskSchema`
-  - `HistoryEntrySchema`
-  - `AppSettingsSchema`
-  - `FavoriteSchema`
-  - Register all in `Isar.open()`
+- [ ] ⬜ **2.10 Hive Adapter Setup**
+  - `DownloadTaskAdapter`
+  - `HistoryEntryAdapter`
+  - `AppSettingsAdapter`
+  - `FavoriteAdapter`
+  - Register all in `Hive.registerAdapter()`
   - _Completed:_ —
 
 ---
 
 ## Phase 3 — Download Engine
 
-- [ ] ⬜ **3.1 DownloadTask Isar Persistence**
+- [ ] ⬜ **3.1 DownloadTask Hive Persistence**
   - CRUD operations in `DownloadLocalSource`
   - _Completed:_ —
 
@@ -189,14 +189,14 @@
   - Progress stream (throttled 4Hz via rxdart)
   - Pause/Resume with `CancelToken` + Range header
   - Temp file cleanup
-  - Update Isar on state changes
+  - Update Hive on state changes
   - _Completed:_ —
 
 - [ ] ⬜ **3.5 DownloadQueueManager**
   - Ordered pending task list
   - Max concurrent from settings
   - Auto-start next on slot free
-  - Persist queue to Isar
+  - Persist queue to Hive
   - _Completed:_ —
 
 - [ ] ⬜ **3.6 DownloadBLoC**
@@ -263,7 +263,7 @@
 - [ ] ⬜ **5.1 History Repository**
   - Abstract `HistoryRepository` (domain)
   - `HistoryRepositoryImpl` (data)
-  - `HistoryLocalSource` — Isar CRUD
+  - `HistoryLocalSource` — Hive CRUD
   - _Completed:_ —
 
 - [ ] ⬜ **5.2 HistoryPage UI**
@@ -342,7 +342,7 @@
 - [ ] ⬜ **7.3 Player Features**
   - Playback speed (0.25x — 2.0x)
   - PiP (Android 8+, check `device_info_plus`)
-  - Remember playback position (Isar)
+  - Remember playback position (Hive)
   - Fullscreen → landscape lock
   - _Completed:_ —
 
@@ -369,7 +369,7 @@
   - _Completed:_ —
 
 - [ ] ⬜ **7.7 SettingsCubit**
-  - Load settings from Isar on startup
+  - Load settings from Hive on startup
   - Persist changes
   - `ThemeCubit` for theme mode
   - _Completed:_ —
@@ -421,9 +421,9 @@
 > Agent must verify before marking any task ✅:
 
 - [ ] All async calls have try-catch and return `Result<T>`
-- [ ] All Isar writes in write transactions
+- [ ] All Hive operations handled safely
 - [ ] All file ops check permissions first
-- [ ] New Isar schemas registered in `Isar.open()`
+- [ ] New Hive adapters registered
 - [ ] New services annotated + registered via injectable
 - [ ] New routes added to `AppRouter`
 - [ ] Feature section comments present (`// >>> ... // <<<`)

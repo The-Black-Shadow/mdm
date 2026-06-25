@@ -15,7 +15,7 @@ While the app is structured to easily integrate additional platforms (such as Fa
 - **Deep Android Integration:** Integration with Android Share Intents to parse shared media links, foreground services for background download persistence, and version-aware storage permission handler.
 - **FFmpeg Integration:** Automated merging of high-quality separate video & audio streams, MP3 audio conversion, WebM to MP4 conversion, and audio ID3 metadata tags embedding.
 - **Custom Gesture Media Player:** Gestures for seeking, brightness, and volume adjustments, Picture-in-Picture (PiP) support, and playback position persistence.
-- **Indexed Local Database:** Search, favorites, date-grouped download history, and app settings managed via Isar Database.
+- **Indexed Local Database:** Search, favorites, date-grouped download history, and app settings managed via Hive database.
 
 ---
 
@@ -102,7 +102,7 @@ lib/
 - **Routing:** `go_router`
 - **Dependency Injection:** `get_it` & `injectable`
 - **Networking:** `dio` with custom interceptors
-- **Local Database:** `isar` & `isar_flutter_libs`
+- **Local Database:** `hive_ce` & `hive_ce_flutter`
 - **Media Processing:** `ffmpeg_kit_flutter_new`
 - **Video Player:** `better_player_plus`
 
