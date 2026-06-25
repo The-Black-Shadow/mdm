@@ -68,34 +68,55 @@ class NotificationService {
     AppLogger.i('NotificationService initialized');
   }
 
-  // Show download progress notification
+  // Show download progress notification (and optionally start foreground service)
   Future<void> showDownloadProgress({
     required int id,
     required String title,
     required int progress,
     required int maxProgress,
   }) async {
-    await _plugin.show(
-      id: id,
-      title: title,
-      body: '${((progress / maxProgress) * 100).toInt()}% downloaded',
-      notificationDetails: NotificationDetails(
-        android: AndroidNotificationDetails(
-          _downloadProgressChannelId,
-          'Download Progress',
-          channelDescription: 'Shows real-time download progress',
-          importance: Importance.low,
-          priority: Priority.low,
-          onlyAlertOnce: true,
-          showProgress: true,
-          maxProgress: maxProgress,
-          progress: progress,
-          ongoing: true,
-          autoCancel: false,
-          playSound: false,
-        ),
-      ),
+    final androidPlugin = _plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+    
+    final details = AndroidNotificationDetails(
+      _downloadProgressChannelId,
+      'Download Progress',
+      channelDescription: 'Shows real-time download progress',
+      importance: Importance.low,
+      priority: Priority.low,
+      onlyAlertOnce: true,
+      showProgress: true,
+      maxProgress: maxProgress,
+      progress: progress,
+      ongoing: true,
+      autoCancel: false,
+      playSound: false,
     );
+
+    if (androidPlugin != null) {
+      await androidPlugin.startForegroundService(
+        id: id,
+        title: title,
+        body: '${((progress / maxProgress) * 100).toInt()}% downloaded',
+        notificationDetails: details,
+        // Using dataSync foreground service type if needed, but not required by default for all versions
+      );
+    } else {
+      await _plugin.show(
+        id: id,
+        title: title,
+        body: '${((progress / maxProgress) * 100).toInt()}% downloaded',
+        notificationDetails: NotificationDetails(android: details),
+      );
+    }
+  }
+
+  // Stop foreground service
+  Future<void> stopForegroundService(int id) async {
+    final androidPlugin = _plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+    if (androidPlugin != null) {
+      await androidPlugin.stopForegroundService();
+      await _plugin.cancel(id: id);
+    }
   }
 
   // Show download complete notification

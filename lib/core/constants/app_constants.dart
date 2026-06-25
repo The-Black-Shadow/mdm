@@ -2,7 +2,7 @@
 // All numeric and string constants used across the application
 abstract class AppConstants {
   // App info
-  static const String appName = 'YTDown';
+  static const String appName = 'MDM';
   static const String appVersion = '1.0.0';
   static const String packageName = 'mdm';
 
@@ -45,7 +45,7 @@ abstract class AppConstants {
   static const String firstLaunchKey = 'is_first_launch';
 
   // File
-  static const String defaultDownloadFolder = 'YTDown';
+  static const String defaultDownloadFolder = 'MDM';
   static const int minFreeStorageBytes = 50 * 1024 * 1024; // 50 MB
 }
 // <<< AppConstants =======================

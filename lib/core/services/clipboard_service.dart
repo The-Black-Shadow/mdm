@@ -1,58 +1,67 @@
-import 'dart:async';
-
-import 'package:flutter/services.dart';
-
-import 'package:mdm/core/utils/app_logger.dart';
-import 'package:mdm/core/utils/validators.dart';
-
 // >>> ClipboardService =======================
-// Polls the clipboard periodically and emits detected YouTube URLs via a stream
+import 'dart:async';
+import 'package:flutter/services.dart';
+import 'package:injectable/injectable.dart';
+import 'package:mdm/core/utils/app_logger.dart';
+
+import 'package:mdm/features/history/domain/repositories/history_repository.dart';
+
+@lazySingleton
 class ClipboardService {
+  final HistoryRepository _historyRepository;
   Timer? _timer;
-  String? _lastDetectedUrl;
+  String _lastCheckedUrl = '';
+  
+  // Stream to emit found YouTube URLs
+  final _urlController = StreamController<String>.broadcast();
+  Stream<String> get onYoutubeUrlFound => _urlController.stream;
 
-  final StreamController<String?> _clipboardController =
-      StreamController<String?>.broadcast();
+  ClipboardService(this._historyRepository);
 
-  Stream<String?> get clipboardUrlStream => _clipboardController.stream;
-
-  // Start polling the clipboard every 2 seconds
   void startPolling() {
-    stopPolling();
-    _timer = Timer.periodic(const Duration(seconds: 2), (_) => _checkClipboard());
-    AppLogger.d('ClipboardService: polling started');
+    if (_timer != null && _timer!.isActive) return;
+    
+    _timer = Timer.periodic(const Duration(seconds: 2), (timer) async {
+      try {
+        final data = await Clipboard.getData(Clipboard.kTextPlain);
+        if (data != null && data.text != null) {
+          final text = data.text!.trim();
+          
+          if (text != _lastCheckedUrl) {
+            _lastCheckedUrl = text;
+            
+            if (_isYoutubeUrl(text)) {
+              final historyResult = await _historyRepository.getHistory();
+              bool alreadyDownloaded = false;
+              if (historyResult.isSuccess) {
+                final history = historyResult.dataOrNull!;
+                alreadyDownloaded = history.any((entry) => text.contains(entry.videoId));
+              }
+              
+              if (!alreadyDownloaded) {
+                AppLogger.d('Found new YouTube URL in clipboard: $text');
+                _urlController.add(text);
+              } else {
+                AppLogger.d('Clipboard URL already in history: $text');
+              }
+            }
+          }
+        }
+      } catch (e) {
+        // Ignore clipboard access errors (e.g. permission denied)
+      }
+    });
   }
 
-  // Stop polling the clipboard
   void stopPolling() {
     _timer?.cancel();
     _timer = null;
   }
 
-  Future<void> _checkClipboard() async {
-    try {
-      final data = await Clipboard.getData(Clipboard.kTextPlain);
-      final text = data?.text?.trim();
-
-      if (text == null || text.isEmpty) return;
-      if (text == _lastDetectedUrl) return;
-
-      if (Validators.isValidYouTubeUrl(text)) {
-        _lastDetectedUrl = text;
-        _clipboardController.add(text);
-        AppLogger.d('ClipboardService: detected YouTube URL → $text');
-      }
-    } catch (e) {
-      // Clipboard access can fail when app is in background
-      AppLogger.w('ClipboardService: clipboard read failed', e);
-    }
-  }
-
-  // Clean up resources
-  void dispose() {
-    stopPolling();
-    _clipboardController.close();
-    AppLogger.d('ClipboardService: disposed');
+  bool _isYoutubeUrl(String text) {
+    if (!text.contains('youtube.com') && !text.contains('youtu.be')) return false;
+    final urlRegExp = RegExp(r'^https?://[^\s]+$');
+    return urlRegExp.hasMatch(text);
   }
 }
 // <<< ClipboardService =======================

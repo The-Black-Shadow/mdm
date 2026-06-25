@@ -9,10 +9,13 @@ import 'package:mdm/features/downloader/domain/entities/download_task.dart';
 import 'package:mdm/shared/enums/download_status.dart';
 import 'package:mdm/features/downloader/domain/services/media_processor.dart';
 
+import 'package:mdm/core/services/notification_service.dart';
+
 @singleton
 class DownloadEngine {
   final Dio _dio = Dio();
   final MediaProcessor _mediaProcessor;
+  final NotificationService _notificationService;
   final Map<String, CancelToken> _cancelTokens = {};
   final StreamController<DownloadTask> _progressController =
       StreamController<DownloadTask>.broadcast();
@@ -21,7 +24,7 @@ class DownloadEngine {
 
   final Map<String, DateTime> _lastEmitTime = {};
 
-  DownloadEngine(this._mediaProcessor);
+  DownloadEngine(this._mediaProcessor, this._notificationService);
 
   Future<void> start(DownloadTask task) async {
     try {
@@ -172,21 +175,26 @@ class DownloadEngine {
     } on DioException catch (e) {
       if (CancelToken.isCancel(e)) {
         AppLogger.i('Download paused/canceled for task: ${task.id}');
+        _notificationService.cancelNotification(task.id.hashCode);
       } else {
         AppLogger.e('Download failed for task: ${task.id}', e);
         _progressController.add(
           task.copyWith(status: DownloadStatus.failed, errorMessage: e.message),
         );
+        _notificationService.showDownloadFailed(id: task.id.hashCode, title: task.title, error: e.message);
       }
       _cancelTokens.remove(task.id);
       _lastEmitTime.remove(task.id);
+      if (_cancelTokens.isEmpty) _notificationService.stopForegroundService(task.id.hashCode);
     } catch (e, stackTrace) {
       AppLogger.e('Unexpected error downloading task: ${task.id}', e, stackTrace);
       _progressController.add(
         task.copyWith(status: DownloadStatus.failed, errorMessage: e.toString()),
       );
+      _notificationService.showDownloadFailed(id: task.id.hashCode, title: task.title, error: e.toString());
       _cancelTokens.remove(task.id);
       _lastEmitTime.remove(task.id);
+      if (_cancelTokens.isEmpty) _notificationService.stopForegroundService(task.id.hashCode);
     }
   }
 
@@ -259,10 +267,27 @@ class DownloadEngine {
 
     _progressController.add(updatedTask);
 
+    final notifId = task.id.hashCode;
+
     if (isCompleted) {
       _cancelTokens.remove(task.id);
       _lastEmitTime.remove(task.id);
       AppLogger.i('Completed download for task: ${task.id}');
+      
+      if (_cancelTokens.isEmpty) {
+        _notificationService.stopForegroundService(notifId);
+      } else {
+        _notificationService.cancelNotification(notifId);
+      }
+      
+      _notificationService.showDownloadComplete(id: notifId, title: task.title);
+    } else {
+      _notificationService.showDownloadProgress(
+        id: notifId,
+        title: task.title,
+        progress: (overallProgress * 100).toInt(),
+        maxProgress: 100,
+      );
     }
   }
 
@@ -271,6 +296,8 @@ class DownloadEngine {
     _cancelTokens[taskId]?.cancel('Paused by user');
     _cancelTokens.remove(taskId);
     _lastEmitTime.remove(taskId);
+    _notificationService.cancelNotification(taskId.hashCode);
+    if (_cancelTokens.isEmpty) _notificationService.stopForegroundService(taskId.hashCode);
   }
 
   Future<void> cancel(String taskId) async {
@@ -278,6 +305,8 @@ class DownloadEngine {
     _cancelTokens[taskId]?.cancel('Canceled by user');
     _cancelTokens.remove(taskId);
     _lastEmitTime.remove(taskId);
+    _notificationService.cancelNotification(taskId.hashCode);
+    if (_cancelTokens.isEmpty) _notificationService.stopForegroundService(taskId.hashCode);
   }
 }
 // <<< DownloadEngine =======================
