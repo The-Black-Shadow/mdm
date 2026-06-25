@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mdm/core/di/hive_module.dart';
 import 'package:mdm/core/di/injection.dart';
 import 'package:mdm/core/router/app_router.dart';
 import 'package:mdm/core/theme/app_theme.dart';
@@ -7,6 +8,9 @@ import 'package:mdm/core/services/notification_service.dart';
 // >>> App Entry Point =======================
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Hive (must be before DI since services may use Hive boxes)
+  await HiveModule.init();
 
   // Initialize dependency injection
   await configureDependencies();
