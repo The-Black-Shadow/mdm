@@ -13,10 +13,7 @@ class MetadataBloc extends Bloc<MetadataEvent, MetadataState> {
   final FetchMetadataUseCase _fetchMetadataUseCase;
   String? _lastUrl;
 
-  // ignore: prefer_initializing_formals
-  MetadataBloc({required FetchMetadataUseCase fetchMetadataUseCase})
-      : _fetchMetadataUseCase = fetchMetadataUseCase,
-        super(const MetadataInitial()) {
+  MetadataBloc(this._fetchMetadataUseCase) : super(const MetadataInitial()) {
     on<FetchMetadataEvent>(_onFetchMetadata);
     on<RetryMetadataEvent>(_onRetryMetadata);
   }

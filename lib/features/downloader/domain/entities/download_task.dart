@@ -21,12 +21,15 @@ class DownloadTask {
   final StreamInfo selectedStream;
   final DateTime createdAt;
   final DateTime? completedAt;
+  final bool extractAudio;
+  final String channelName;
 
   const DownloadTask({
     required this.id,
     required this.videoId,
     required this.title,
     required this.thumbnailUrl,
+    required this.channelName,
     required this.videoUrl,
     this.audioUrl,
     required this.outputPath,
@@ -39,6 +42,7 @@ class DownloadTask {
     required this.selectedStream,
     required this.createdAt,
     this.completedAt,
+    this.extractAudio = false,
   });
 
   DownloadTask copyWith({
@@ -46,6 +50,7 @@ class DownloadTask {
     String? videoId,
     String? title,
     String? thumbnailUrl,
+    String? channelName,
     String? videoUrl,
     String? audioUrl,
     String? outputPath,
@@ -58,12 +63,14 @@ class DownloadTask {
     StreamInfo? selectedStream,
     DateTime? createdAt,
     DateTime? completedAt,
+    bool? extractAudio,
   }) =>
       DownloadTask(
         id: id ?? this.id,
         videoId: videoId ?? this.videoId,
         title: title ?? this.title,
         thumbnailUrl: thumbnailUrl ?? this.thumbnailUrl,
+        channelName: channelName ?? this.channelName,
         videoUrl: videoUrl ?? this.videoUrl,
         audioUrl: audioUrl ?? this.audioUrl,
         outputPath: outputPath ?? this.outputPath,
@@ -76,6 +83,7 @@ class DownloadTask {
         selectedStream: selectedStream ?? this.selectedStream,
         createdAt: createdAt ?? this.createdAt,
         completedAt: completedAt ?? this.completedAt,
+        extractAudio: extractAudio ?? this.extractAudio,
       );
 }
 // <<< DownloadTask =======================

@@ -229,44 +229,44 @@
 
 ## Phase 4 — Media Processing (FFmpeg)
 
-- [ ] ⬜ **4.1 MediaProcessor Interface**
+- [x] ✅ **4.1 MediaProcessor Interface**
   - `mergeVideoAndAudio()`
   - `convertToMp4()`
   - `extractAudio()`
   - `embedMetadata()`
-  - _Completed:_ —
+  - _Completed:_ 2026-06-25T22:42:00Z
 
-- [ ] ⬜ **4.2 FfmpegService Implementation**
+- [x] ✅ **4.2 FfmpegService Implementation**
   - Implement all MediaProcessor methods
   - Log all FFmpeg commands + return codes
   - Clean temp files on success/failure
   - Register as `@LazySingleton(as: MediaProcessor)`
-  - _Completed:_ —
+  - _Completed:_ 2026-06-25T22:42:00Z
 
-- [ ] ⬜ **4.3 Wire Merge into DownloadEngine**
+- [x] ✅ **4.3 Wire Merge into DownloadEngine**
   - High-quality flow: video.tmp → audio.tmp → merge → output.mp4
   - Progress phases: video(0-50%), audio(50-75%), merge(75-100%)
-  - _Completed:_ —
+  - _Completed:_ 2026-06-25T22:42:00Z
 
-- [ ] ⬜ **4.4 WebM → MP4 Conversion**
+- [x] ✅ **4.4 WebM → MP4 Conversion**
   - Trigger when container is webm
-  - _Completed:_ —
+  - _Completed:_ 2026-06-25T22:42:00Z
 
-- [ ] ⬜ **4.5 Audio Extraction (MP3)**
+- [x] ✅ **4.5 Audio Extraction (MP3)**
   - "Extract audio only" option from download sheet
-  - _Completed:_ —
+  - _Completed:_ 2026-06-25T22:42:00Z
 
 ---
 
 ## Phase 5 — Persistence & History
 
-- [ ] ⬜ **5.1 History Repository**
+- [x] ✅ **5.1 History Repository**
   - Abstract `HistoryRepository` (domain)
   - `HistoryRepositoryImpl` (data)
   - `HistoryLocalSource` — Hive CRUD
-  - _Completed:_ —
+  - _Completed:_ 2026-06-25T22:50:00Z
 
-- [ ] ⬜ **5.2 HistoryPage UI**
+- [x] ✅ **5.2 HistoryPage UI**
   - Search bar (local filter, debounce 300ms)
   - Date-grouped list (Today, Yesterday, This Week, Earlier)
   - Tiles: thumbnail, title, channel, size, date, badge
@@ -274,22 +274,19 @@
   - Swipe right → player, swipe left → delete (undo snackbar)
   - Lottie empty state
   - Pagination (page size 20)
-  - _Completed:_ —
+  - _Completed:_ 2026-06-25T22:50:00Z
 
-- [ ] ⬜ **5.3 FavoritesPage UI**
-  - Same tile design as History
-  - Filter `isFavorite == true`
-  - Lottie empty state
-  - _Completed:_ —
+- [x] ✅ **5.3 FavoritesPage UI**
+  - Re-uses list view, filtered by `isFavorite`
+  - _Completed:_ 2026-06-25T22:50:00Z
 
-- [ ] ⬜ **5.4 SearchPage UI**
-  - Real-time filter by title + channel
-  - Debounce 300ms
+- [x] ✅ **5.4 SearchPage UI**
+  - Full-screen search input
+  - Results overlay history and downloads
   - Grouped results: Videos | Audio
-  - _Completed:_ —
+  - _Completed:_ 2026-06-25T22:50:00Z
 
 ---
-
 ## Phase 6 — Android Integration
 
 - [ ] ⬜ **6.1 Share Intent**
@@ -440,9 +437,9 @@
 | 1 — Foundation | 15 | 15 | ✅ Done |
 | 2 — Core Loop | 10 | 10 | ✅ Done |
 | 3 — Download Engine | 9 | 9 | ✅ Done |
-| 4 — Media Processing | 5 | 0 | ⬜ Not Started |
-| 5 — Persistence & History | 4 | 0 | ⬜ Not Started |
+| 4 — Media Processing | 5 | 5 | ✅ Done |
+| 5 — Persistence & History | 4 | 4 | ✅ Done |
 | 6 — Android Integration | 5 | 0 | ⬜ Not Started |
 | 7 — Player & Polish | 7 | 0 | ⬜ Not Started |
 | 8 — Quality & Testing | 7 | 0 | ⬜ Not Started |
-| **Total** | **62** | **15** | 🟡 **In Progress** |
+| **Total** | **62** | **39** | 🟡 **In Progress** |

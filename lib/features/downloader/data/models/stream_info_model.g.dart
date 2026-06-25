@@ -9,6 +9,7 @@ part of 'stream_info_model.dart';
 _StreamInfoModel _$StreamInfoModelFromJson(Map<String, dynamic> json) =>
     _StreamInfoModel(
       itag: json['itag'] as String,
+      url: json['url'] as String,
       type: json['type'] as String,
       resolution: json['resolution'] as String?,
       fps: (json['fps'] as num?)?.toInt(),
@@ -22,6 +23,7 @@ _StreamInfoModel _$StreamInfoModelFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$StreamInfoModelToJson(_StreamInfoModel instance) =>
     <String, dynamic>{
       'itag': instance.itag,
+      'url': instance.url,
       'type': instance.type,
       'resolution': instance.resolution,
       'fps': instance.fps,

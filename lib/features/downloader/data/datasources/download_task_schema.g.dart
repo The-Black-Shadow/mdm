@@ -37,13 +37,17 @@ class DownloadTaskSchemaAdapter extends TypeAdapter<DownloadTaskSchema> {
       createdAt: fields[17] as DateTime,
       completedAt: fields[18] as DateTime?,
       estimatedSizeBytes: (fields[19] as num?)?.toInt(),
+      extractAudio: fields[20] == null ? false : fields[20] as bool,
+      channelName: fields[21] == null
+          ? 'Unknown Channel'
+          : fields[21] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, DownloadTaskSchema obj) {
     writer
-      ..writeByte(20)
+      ..writeByte(22)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -83,7 +87,11 @@ class DownloadTaskSchemaAdapter extends TypeAdapter<DownloadTaskSchema> {
       ..writeByte(18)
       ..write(obj.completedAt)
       ..writeByte(19)
-      ..write(obj.estimatedSizeBytes);
+      ..write(obj.estimatedSizeBytes)
+      ..writeByte(20)
+      ..write(obj.extractAudio)
+      ..writeByte(21)
+      ..write(obj.channelName);
   }
 
   @override

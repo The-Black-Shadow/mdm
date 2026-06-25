@@ -10,6 +10,9 @@ import 'package:mdm/features/downloader/presentation/bloc/metadata_bloc.dart';
 import 'package:mdm/features/downloader/presentation/pages/metadata_page.dart';
 import 'package:mdm/features/downloader/presentation/pages/quality_selection_page.dart';
 import 'package:mdm/features/downloads/presentation/pages/downloads_page.dart';
+import 'package:mdm/features/history/presentation/pages/favorites_page.dart';
+import 'package:mdm/features/history/presentation/pages/history_page.dart';
+import 'package:mdm/features/history/presentation/pages/search_page.dart';
 
 // >>> App Router =======================
 // GoRouter configuration with all application routes
@@ -34,7 +37,7 @@ class AppRouter {
           final url = state.extra as String? ?? '';
           return BlocProvider(
             create: (_) => MetadataBloc(
-              fetchMetadataUseCase: getIt<FetchMetadataUseCase>(),
+              getIt<FetchMetadataUseCase>(),
             )..add(FetchMetadataEvent(url: url)),
             child: const MetadataPage(),
           );
@@ -74,14 +77,14 @@ class AppRouter {
       GoRoute(
         path: RouteConstants.history,
         name: 'history',
-        builder: (context, state) => const _StubPage(name: 'History'),
+        builder: (context, state) => const HistoryPage(),
       ),
 
       // Favorites route
       GoRoute(
         path: RouteConstants.favorites,
         name: 'favorites',
-        builder: (context, state) => const _StubPage(name: 'Favorites'),
+        builder: (context, state) => const FavoritesPage(),
       ),
 
       // Settings route
@@ -95,7 +98,7 @@ class AppRouter {
       GoRoute(
         path: RouteConstants.search,
         name: 'search',
-        builder: (context, state) => const _StubPage(name: 'Search'),
+        builder: (context, state) => const SearchPage(),
       ),
     ],
   );

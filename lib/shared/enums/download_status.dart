@@ -6,5 +6,6 @@ enum DownloadStatus {
   paused,
   completed,
   failed,
+  merging,
 }
 // <<< DownloadStatus =======================

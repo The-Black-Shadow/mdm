@@ -5,6 +5,7 @@ import 'package:mdm/shared/enums/media_type.dart';
 
 class StreamInfo {
   final String itag;
+  final String url;
   final MediaType type;
   final String? resolution;
   final int? fps;
@@ -16,6 +17,7 @@ class StreamInfo {
 
   const StreamInfo({
     required this.itag,
+    required this.url,
     required this.type,
     this.resolution,
     this.fps,
