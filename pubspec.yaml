@@ -7,83 +7,51 @@ environment:
   sdk: ^3.12.2
 
 dependencies:
+  better_player_plus: ^1.3.4
+  bloc: ^9.2.1
+  cached_network_image: ^3.4.1
+  connectivity_plus: ^7.1.1
+  device_info_plus: ^13.1.0
+  dio: ^5.9.2
+  equatable: ^2.0.8
+  ffmpeg_kit_flutter_new: ^4.2.1
   flutter:
     sdk: flutter
-
-  # State Management
-  flutter_bloc:
-  bloc:
-
-  # Dependency Injection
-  get_it:
-  injectable:
-
-  # Routing
-  go_router:
-
-  # Networking
-  dio:
-
-  # Code Generation (immutable models)
-  freezed_annotation:
-  json_annotation:
-
-  # Local Database
-  isar:
-  isar_flutter_libs:
-
-  # Secure preferences
-  flutter_secure_storage:
-
-  # YouTube metadata + stream extraction
-  youtube_explode_dart:
-
-  # FFmpeg
-  ffmpeg_kit_flutter_new:
-
-  # Video player
-  better_player_plus:
-
-  # File & Storage
-  path_provider:
-  permission_handler:
-  open_filex:
-
-  # Share Intent
-  receive_sharing_intent:
-
-  # Device info
-  device_info_plus:
-
-  # UI & Image
-  cached_network_image:
-  shimmer:
-  lottie:
-  flutter_animate:
-  lucide_icons:
-  google_fonts:
-
-  # Notifications
-  flutter_local_notifications:
-
-  # Utilities
-  logger:
-  equatable:
-  rxdart:
-  connectivity_plus:
-  intl:
-  uuid:
+  flutter_animate: ^4.5.2
+  flutter_bloc: ^9.1.1
+  flutter_local_notifications: ^22.0.1
+  flutter_secure_storage: ^10.3.1
+  freezed_annotation: ^3.1.0
+  get_it: ^9.2.1
+  go_router: ^17.3.0
+  google_fonts: ^8.1.0
+  injectable: ^3.0.0
+  intl: ^0.20.2
+  isar: ^3.1.0+1
+  isar_flutter_libs: ^3.1.0+1
+  json_annotation: ^4.12.0
+  logger: ^2.7.0
+  lottie: ^3.3.3
+  lucide_icons: ^0.257.0
+  open_filex: ^4.7.0
+  path_provider: ^2.1.6
+  permission_handler: ^12.0.3
+  receive_sharing_intent: ^1.9.0
+  rxdart: ^0.28.0
+  shimmer: ^3.0.0
+  uuid: ^4.5.3
+  youtube_explode_dart: ^3.1.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
-  freezed:
-  json_serializable:
-  injectable_generator:
-  build_runner:
-  bloc_test:
-  mocktail:
+  freezed: ^3.2.6-dev.1
+  json_serializable: ^6.14.0
+  injectable_generator: ^3.0.2
+  build_runner: ^2.15.0
+  bloc_test: ^10.0.0
+  mocktail: ^1.0.5
 
 flutter:
   uses-material-design: true
