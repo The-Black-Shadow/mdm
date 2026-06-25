@@ -26,6 +26,7 @@ class YoutubeRemoteSource {
       final videoOnlyStreams = manifest.videoOnly.map((s) {
         return StreamInfoModel(
           itag: s.tag.toString(),
+          url: s.url.toString(),
           resolution: s.videoResolution.toString(),
           fps: s.framerate.framesPerSecond.toInt(),
           codec: s.codec.type,
@@ -40,6 +41,7 @@ class YoutubeRemoteSource {
       final muxedStreams = manifest.muxed.map((s) {
         return StreamInfoModel(
           itag: s.tag.toString(),
+          url: s.url.toString(),
           resolution: s.videoResolution.toString(),
           fps: s.framerate.framesPerSecond.toInt(),
           codec: s.codec.type,
@@ -54,6 +56,7 @@ class YoutubeRemoteSource {
       final audioOnlyStreams = manifest.audioOnly.map((s) {
         return StreamInfoModel(
           itag: s.tag.toString(),
+          url: s.url.toString(),
           resolution: null,
           fps: null,
           codec: s.codec.type,

@@ -14,6 +14,7 @@ abstract class StreamInfoModel with _$StreamInfoModel {
 
   const factory StreamInfoModel({
     required String itag,
+    required String url,
     required String type,
     String? resolution,
     int? fps,
@@ -29,6 +30,7 @@ abstract class StreamInfoModel with _$StreamInfoModel {
 
   StreamInfo toDomain() => StreamInfo(
         itag: itag,
+        url: url,
         type: MediaType.values.firstWhere((e) => e.name == type),
         resolution: resolution,
         fps: fps,

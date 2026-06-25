@@ -81,6 +81,8 @@ class DownloadLocalSource {
       createdAt: task.createdAt,
       completedAt: task.completedAt,
       estimatedSizeBytes: task.selectedStream.estimatedSizeBytes,
+      extractAudio: task.extractAudio,
+      channelName: task.channelName,
     );
   }
 
@@ -90,6 +92,7 @@ class DownloadLocalSource {
       videoId: schema.videoId,
       title: schema.title,
       thumbnailUrl: schema.thumbnailUrl,
+      channelName: schema.channelName,
       videoUrl: schema.videoUrl,
       audioUrl: schema.audioUrl,
       outputPath: schema.outputPath,
@@ -98,6 +101,7 @@ class DownloadLocalSource {
       errorMessage: schema.errorMessage,
       selectedStream: StreamInfo(
         itag: schema.streamItag.toString(),
+        url: '',
         type: MediaType.values.firstWhere(
             (e) => e.name == schema.streamType,
             orElse: () => MediaType.video),
@@ -110,6 +114,7 @@ class DownloadLocalSource {
       ),
       createdAt: schema.createdAt,
       completedAt: schema.completedAt,
+      extractAudio: schema.extractAudio,
     );
   }
 }

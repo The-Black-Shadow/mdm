@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:mdm/core/extensions/duration_extensions.dart';
 import 'package:mdm/core/theme/app_colors.dart';
 import 'package:mdm/core/theme/app_spacing.dart';
 import 'package:mdm/core/utils/app_logger.dart';
+import 'package:mdm/features/downloader/domain/entities/download_task.dart';
 import 'package:mdm/features/downloader/domain/entities/stream_info.dart';
 import 'package:mdm/features/downloader/domain/entities/video_metadata.dart';
+import 'package:mdm/features/downloader/presentation/bloc/download_bloc.dart' as mdm_bloc;
 import 'package:mdm/features/downloader/presentation/widgets/audio_quality_tile.dart';
 import 'package:mdm/features/downloader/presentation/widgets/download_options_sheet.dart';
 import 'package:mdm/features/downloader/presentation/widgets/stream_quality_tile.dart';
 import 'package:mdm/shared/components/thumbnail_widget.dart';
+import 'package:mdm/shared/enums/download_status.dart';
 
 // >>> QualitySelectionPage =======================
 // Displays available streams grouped by Video and Audio tabs with a
@@ -56,11 +60,11 @@ class QualitySelectionPage extends StatelessWidget {
                 children: [
                   _VideoStreamList(
                     streams: metadata.videoStreams,
-                    videoTitle: metadata.title,
+                    metadata: metadata,
                   ),
                   _AudioStreamList(
                     streams: metadata.audioStreams,
-                    videoTitle: metadata.title,
+                    metadata: metadata,
                   ),
                 ],
               ),
@@ -138,11 +142,11 @@ class _CompactHeader extends StatelessWidget {
 // Lists video streams grouped by resolution descending
 class _VideoStreamList extends StatelessWidget {
   final List<StreamInfo> streams;
-  final String videoTitle;
+  final VideoMetadata metadata;
 
   const _VideoStreamList({
     required this.streams,
-    required this.videoTitle,
+    required this.metadata,
   });
 
   @override
@@ -180,29 +184,53 @@ class _VideoStreamList extends StatelessWidget {
   void _showDownloadOptions(BuildContext context, StreamInfo stream) {
     DownloadOptionsSheet.show(
       context: context,
-      videoTitle: videoTitle,
+      videoTitle: metadata.title,
       selectedStream: stream,
       onStartDownload: ({
         required String fileName,
         required bool extractAudio,
       }) {
         AppLogger.i('Download started: $fileName, extract: $extractAudio');
-        // TODO: Dispatch download event in Phase 3
+        final taskId = DateTime.now().millisecondsSinceEpoch.toString();
+        // Since we don't have a file picker yet, we use a default path and append the name
+        // The actual path logic will be refined in Phase 7
+        final outputExt = extractAudio ? '.mp3' : '.mp4';
+        final finalFileName = fileName.endsWith(outputExt) ? fileName : '$fileName$outputExt';
+        // Note: For now we just use the file name. The DownloadEngine should probably prepend the directory.
+        
+        final task = DownloadTask(
+          id: taskId,
+          videoId: metadata.videoId,
+          title: metadata.title,
+          thumbnailUrl: metadata.thumbnailUrl,
+          channelName: metadata.channelName,
+          videoUrl: stream.url,
+          audioUrl: metadata.audioStreams.isNotEmpty ? metadata.audioStreams.first.url : null,
+          outputPath: finalFileName,
+          status: DownloadStatus.waiting,
+          progress: 0.0,
+          selectedStream: stream,
+          createdAt: DateTime.now(),
+          extractAudio: extractAudio,
+        );
+        
+        context.read<mdm_bloc.DownloadBloc>().add(mdm_bloc.StartDownloadEvent(task));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Download added to queue')),
+        );
       },
     );
   }
 }
 // <<< VideoStreamList =======================
 
-// >>> AudioStreamList =======================
-// Lists audio streams sorted by bitrate descending
 class _AudioStreamList extends StatelessWidget {
   final List<StreamInfo> streams;
-  final String videoTitle;
+  final VideoMetadata metadata;
 
   const _AudioStreamList({
     required this.streams,
-    required this.videoTitle,
+    required this.metadata,
   });
 
   @override
@@ -234,14 +262,40 @@ class _AudioStreamList extends StatelessWidget {
   void _showDownloadOptions(BuildContext context, StreamInfo stream) {
     DownloadOptionsSheet.show(
       context: context,
-      videoTitle: videoTitle,
+      videoTitle: metadata.title,
       selectedStream: stream,
       onStartDownload: ({
         required String fileName,
         required bool extractAudio,
       }) {
         AppLogger.i('Audio download started: $fileName');
-        // TODO: Dispatch download event in Phase 3
+        final taskId = DateTime.now().millisecondsSinceEpoch.toString();
+        // Since we don't have a file picker yet, we use a default path and append the name
+        // The actual path logic will be refined in Phase 7
+        final outputExt = extractAudio ? '.mp3' : '.mp4';
+        final finalFileName = fileName.endsWith(outputExt) ? fileName : '$fileName$outputExt';
+        // Note: For now we just use the file name. The DownloadEngine should probably prepend the directory.
+        
+        final task = DownloadTask(
+          id: taskId,
+          videoId: metadata.videoId,
+          title: metadata.title,
+          thumbnailUrl: metadata.thumbnailUrl,
+          channelName: metadata.channelName,
+          videoUrl: stream.url,
+          audioUrl: null,
+          outputPath: finalFileName,
+          status: DownloadStatus.waiting,
+          progress: 0.0,
+          selectedStream: stream,
+          createdAt: DateTime.now(),
+          extractAudio: extractAudio, // though for audio stream it will likely be ignored or converted to mp3.
+        );
+        
+        context.read<mdm_bloc.DownloadBloc>().add(mdm_bloc.StartDownloadEvent(task));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Download added to queue')),
+        );
       },
     );
   }

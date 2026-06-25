@@ -23,10 +23,12 @@ import '../../features/downloader/data/repositories/metadata_repository_impl.dar
 import '../../features/downloader/data/services/download_engine.dart' as _i212;
 import '../../features/downloader/data/services/download_queue_manager.dart'
     as _i402;
+import '../../features/downloader/data/services/ffmpeg_service.dart' as _i1;
 import '../../features/downloader/domain/repositories/download_repository.dart'
     as _i621;
 import '../../features/downloader/domain/repositories/metadata_repository.dart'
     as _i370;
+import '../../features/downloader/domain/services/media_processor.dart' as _i91;
 import '../../features/downloader/domain/usecases/cancel_download_usecase.dart'
     as _i778;
 import '../../features/downloader/domain/usecases/fetch_metadata_usecase.dart'
@@ -37,6 +39,16 @@ import '../../features/downloader/domain/usecases/start_download_usecase.dart'
     as _i882;
 import '../../features/downloader/presentation/bloc/download_bloc.dart'
     as _i784;
+import '../../features/history/data/datasources/history_local_source.dart'
+    as _i404;
+import '../../features/history/data/repositories/history_repository_impl.dart'
+    as _i751;
+import '../../features/history/domain/repositories/history_repository.dart'
+    as _i142;
+import '../../features/history/presentation/cubit/favorites_cubit.dart'
+    as _i602;
+import '../../features/history/presentation/cubit/history_cubit.dart' as _i232;
+import '../../features/history/presentation/cubit/search_cubit.dart' as _i576;
 import '../network/dio_client.dart' as _i667;
 import '../services/connectivity_service.dart' as _i47;
 import '../services/notification_service.dart' as _i941;
@@ -48,7 +60,6 @@ extension GetItInjectableX on _i174.GetIt {
     _i526.EnvironmentFilter? environmentFilter,
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
-    gh.singleton<_i212.DownloadEngine>(() => _i212.DownloadEngine());
     gh.lazySingleton<_i667.DioClient>(() => _i667.DioClient());
     gh.lazySingleton<_i47.ConnectivityService>(
       () => _i47.ConnectivityService(),
@@ -62,8 +73,36 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i640.YoutubeRemoteSource>(
       () => _i640.YoutubeRemoteSource(),
     );
+    gh.lazySingleton<_i404.HistoryLocalSource>(
+      () => _i404.HistoryLocalSource(),
+    );
+    gh.lazySingleton<_i91.MediaProcessor>(() => _i1.FfmpegService());
+    gh.lazySingleton<_i370.MetadataRepository>(
+      () => _i270.MetadataRepositoryImpl(gh<_i640.YoutubeRemoteSource>()),
+    );
+    gh.lazySingleton<_i142.HistoryRepository>(
+      () => _i751.HistoryRepositoryImpl(gh<_i404.HistoryLocalSource>()),
+    );
+    gh.factory<_i1034.FetchMetadataUseCase>(
+      () => _i1034.FetchMetadataUseCase(gh<_i370.MetadataRepository>()),
+    );
+    gh.singleton<_i212.DownloadEngine>(
+      () => _i212.DownloadEngine(gh<_i91.MediaProcessor>()),
+    );
+    gh.factory<_i602.FavoritesCubit>(
+      () => _i602.FavoritesCubit(gh<_i142.HistoryRepository>()),
+    );
+    gh.factory<_i232.HistoryCubit>(
+      () => _i232.HistoryCubit(gh<_i142.HistoryRepository>()),
+    );
+    gh.factory<_i576.SearchCubit>(
+      () => _i576.SearchCubit(gh<_i142.HistoryRepository>()),
+    );
     gh.singleton<_i402.DownloadQueueManager>(
-      () => _i402.DownloadQueueManager(gh<_i212.DownloadEngine>()),
+      () => _i402.DownloadQueueManager(
+        gh<_i212.DownloadEngine>(),
+        gh<_i142.HistoryRepository>(),
+      ),
       dispose: (i) => i.dispose(),
     );
     gh.lazySingleton<_i621.DownloadRepository>(
@@ -71,12 +110,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i631.DownloadLocalSource>(),
         gh<_i402.DownloadQueueManager>(),
       ),
-    );
-    gh.lazySingleton<_i370.MetadataRepository>(
-      () => _i270.MetadataRepositoryImpl(gh<_i640.YoutubeRemoteSource>()),
-    );
-    gh.factory<_i1034.FetchMetadataUseCase>(
-      () => _i1034.FetchMetadataUseCase(gh<_i370.MetadataRepository>()),
     );
     gh.factory<_i778.CancelDownloadUseCase>(
       () => _i778.CancelDownloadUseCase(gh<_i621.DownloadRepository>()),
