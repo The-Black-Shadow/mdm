@@ -289,35 +289,35 @@
 ---
 ## Phase 6 — Android Integration
 
-- [ ] ⬜ **6.1 Share Intent**
+- [x] ✅ **6.1 Share Intent**
   - `receive_sharing_intent` setup
   - Listen in `main()` + on resume
   - Extract URL → validate → navigate to MetadataPage
   - AndroidManifest intent-filter
-  - _Completed:_ —
+  - _Completed:_ 2026-06-25T23:05:00Z
 
-- [ ] ⬜ **6.2 Clipboard Detection**
+- [x] ✅ **6.2 Clipboard Detection**
   - Poll every 2s in foreground
   - Debounce + deduplicate
   - Only show for valid YouTube URLs not already downloaded
   - Store last shown URL
-  - _Completed:_ —
+  - _Completed:_ 2026-06-25T23:05:00Z
 
-- [ ] ⬜ **6.3 Storage Permissions**
+- [x] ✅ **6.3 Storage Permissions**
   - Android 13+ (API 33+): `READ_MEDIA_VIDEO`, `READ_MEDIA_AUDIO`
   - Android 10-12: `READ_EXTERNAL_STORAGE`
   - Android 9-: `READ_EXTERNAL_STORAGE` + `WRITE_EXTERNAL_STORAGE`
   - Use `device_info_plus` for version detection
-  - _Completed:_ —
+  - _Completed:_ 2026-06-25T23:05:00Z
 
-- [ ] ⬜ **6.4 AndroidManifest.xml Permissions**
+- [x] ✅ **6.4 AndroidManifest.xml Permissions**
   - INTERNET, storage, FOREGROUND_SERVICE, POST_NOTIFICATIONS, PIP
-  - _Completed:_ —
+  - _Completed:_ 2026-06-25T23:05:00Z
 
-- [ ] ⬜ **6.5 Foreground Service**
+- [x] ✅ **6.5 Foreground Service**
   - Downloads continue when backgrounded
   - Ongoing notification with progress
-  - _Completed:_ —
+  - _Completed:_ 2026-06-25T23:05:00Z
 
 ---
 
@@ -439,7 +439,7 @@
 | 3 — Download Engine | 9 | 9 | ✅ Done |
 | 4 — Media Processing | 5 | 5 | ✅ Done |
 | 5 — Persistence & History | 4 | 4 | ✅ Done |
-| 6 — Android Integration | 5 | 0 | ⬜ Not Started |
+| 6 — Android Integration | 5 | 5 | ✅ Done |
 | 7 — Player & Polish | 7 | 0 | ⬜ Not Started |
 | 8 — Quality & Testing | 7 | 0 | ⬜ Not Started |
-| **Total** | **62** | **39** | 🟡 **In Progress** |
+| **Total** | **62** | **44** | 🟡 **In Progress** |

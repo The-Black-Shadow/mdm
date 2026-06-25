@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 // >>> AppColors =======================
-// All color tokens for the YTDown design system
+// All color tokens for the MDM design system
 abstract class AppColors {
   // Primary
   static const Color primary = Color(0xFFFF0000);
