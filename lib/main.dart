@@ -3,7 +3,9 @@ import 'package:mdm/core/di/hive_module.dart';
 import 'package:mdm/core/di/injection.dart';
 import 'package:mdm/core/router/app_router.dart';
 import 'package:mdm/core/theme/app_theme.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mdm/core/services/notification_service.dart';
+import 'package:mdm/features/downloader/presentation/bloc/download_bloc.dart';
 
 // >>> App Entry Point =======================
 void main() async {
@@ -28,13 +30,16 @@ class YTDownApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'YTDown',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.light,
-      darkTheme: AppTheme.dark,
-      themeMode: ThemeMode.dark,
-      routerConfig: AppRouter.router,
+    return BlocProvider(
+      create: (_) => getIt<DownloadBloc>(),
+      child: MaterialApp.router(
+        title: 'YTDown',
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.light,
+        darkTheme: AppTheme.dark,
+        themeMode: ThemeMode.dark,
+        routerConfig: AppRouter.router,
+      ),
     );
   }
 }
