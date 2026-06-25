@@ -102,128 +102,128 @@
 
 ## Phase 2 — Core Loop (Metadata + Quality Selection)
 
-- [ ] ⬜ **2.1 YouTube Remote Source**
+- [x] ✅ **2.1 YouTube Remote Source**
   - `youtube_explode_dart` adapter in data layer
   - Wrap all calls, return `Result<T>`
-  - _Completed:_ —
+  - _Completed:_ 2026-06-25T21:00:00Z
 
-- [ ] ⬜ **2.2 Domain Entities**
+- [x] ✅ **2.2 Domain Entities**
   - `VideoMetadata` entity
   - `StreamInfo` entity
   - `DownloadTask` entity
-  - _Completed:_ —
+  - _Completed:_ 2026-06-25T21:00:00Z
 
-- [ ] ⬜ **2.3 Data Models (freezed)**
+- [x] ✅ **2.3 Data Models (freezed)**
   - `VideoMetadataModel` with `toDomain()`
   - `StreamInfoModel` with `toDomain()`
   - Run `build_runner`
-  - _Completed:_ —
+  - _Completed:_ 2026-06-25T21:00:00Z
 
-- [ ] ⬜ **2.4 Metadata Repository**
+- [x] ✅ **2.4 Metadata Repository**
   - Abstract `MetadataRepository` (domain)
   - `MetadataRepositoryImpl` (data)
-  - _Completed:_ —
+  - _Completed:_ 2026-06-25T21:00:00Z
 
-- [ ] ⬜ **2.5 FetchMetadataUseCase**
+- [x] ✅ **2.5 FetchMetadataUseCase**
   - Calls repository, returns `Result<VideoMetadata>`
-  - _Completed:_ —
+  - _Completed:_ 2026-06-25T21:00:00Z
 
-- [ ] ⬜ **2.6 MetadataBLoC**
+- [x] ✅ **2.6 MetadataBLoC**
   - Events: `FetchMetadataEvent`, `RetryMetadataEvent`
   - States: `Initial`, `Loading`, `Loaded`, `Error`
-  - _Completed:_ —
+  - _Completed:_ 2026-06-25T21:00:00Z
 
-- [ ] ⬜ **2.7 MetadataPage UI**
+- [x] ✅ **2.7 MetadataPage UI**
   - Full-width thumbnail + gradient overlay
   - Title, channel, duration, views, date
   - Expandable description
   - Shimmer loading state
   - Lottie error state + retry
   - Sticky bottom bar (Audio Only + Select Quality)
-  - _Completed:_ —
+  - _Completed:_ 2026-06-25T21:00:00Z
 
-- [ ] ⬜ **2.8 QualitySelectionPage UI**
+- [x] ✅ **2.8 QualitySelectionPage UI**
   - Compact header (thumb + title + duration)
   - Tab bar: Video | Audio Only
   - Video tab: streams grouped by resolution
   - Audio tab: streams sorted by bitrate
   - `requiresMerge` info tooltip
-  - _Completed:_ —
+  - _Completed:_ 2026-06-25T21:00:00Z
 
-- [ ] ⬜ **2.9 DownloadOptionsSheet**
+- [x] ✅ **2.9 DownloadOptionsSheet**
   - Editable filename
   - Download folder selector
   - Extract audio toggle (for video)
   - Start Download button
-  - _Completed:_ —
+  - _Completed:_ 2026-06-25T21:00:00Z
 
-- [ ] ⬜ **2.10 Hive Adapter Setup**
+- [x] ✅ **2.10 Hive Adapter Setup**
   - `DownloadTaskAdapter`
   - `HistoryEntryAdapter`
   - `AppSettingsAdapter`
   - `FavoriteAdapter`
   - Register all in `Hive.registerAdapter()`
-  - _Completed:_ —
+  - _Completed:_ 2026-06-25T21:00:00Z
+
 
 ---
-
 ## Phase 3 — Download Engine
 
-- [ ] ⬜ **3.1 DownloadTask Hive Persistence**
+- [x] ✅ **3.1 DownloadTask Hive Persistence**
   - CRUD operations in `DownloadLocalSource`
-  - _Completed:_ —
+  - _Completed:_ 2026-06-25T21:30:00Z
 
-- [ ] ⬜ **3.2 Download Repository**
+- [x] ✅ **3.2 Download Repository**
   - Abstract `DownloadRepository` (domain)
   - `DownloadRepositoryImpl` (data)
-  - _Completed:_ —
+  - _Completed:_ 2026-06-25T21:30:00Z
 
-- [ ] ⬜ **3.3 Download Use Cases**
+- [x] ✅ **3.3 Download Use Cases**
   - `StartDownloadUseCase`
   - `PauseDownloadUseCase`
   - `CancelDownloadUseCase`
-  - _Completed:_ —
+  - _Completed:_ 2026-06-25T21:30:00Z
 
-- [ ] ⬜ **3.4 DownloadEngine (muxed only)**
+- [x] ✅ **3.4 DownloadEngine (muxed only)**
   - Dio byte streaming to file
   - Progress stream (throttled 4Hz via rxdart)
   - Pause/Resume with `CancelToken` + Range header
   - Temp file cleanup
   - Update Hive on state changes
-  - _Completed:_ —
+  - _Completed:_ 2026-06-25T21:30:00Z
 
-- [ ] ⬜ **3.5 DownloadQueueManager**
+- [x] ✅ **3.5 DownloadQueueManager**
   - Ordered pending task list
   - Max concurrent from settings
   - Auto-start next on slot free
   - Persist queue to Hive
-  - _Completed:_ —
+  - _Completed:_ 2026-06-25T21:30:00Z
 
-- [ ] ⬜ **3.6 DownloadBLoC**
+- [x] ✅ **3.6 DownloadBLoC**
   - Real-time progress from engine stream
   - Throttled state emissions
   - Events: Start, Pause, Resume, Cancel, Retry
-  - _Completed:_ —
+  - _Completed:_ 2026-06-25T21:30:00Z
 
-- [ ] ⬜ **3.7 DownloadsPage UI**
+- [x] ✅ **3.7 DownloadsPage UI**
   - Tabs: Active | Queue | Completed
   - `ActiveDownloadTile` with progress bar, speed, ETA
   - Queue tab with drag-to-reorder
   - Action buttons per state (Pause/Resume/Cancel/Delete/Open/Share)
-  - _Completed:_ —
+  - _Completed:_ 2026-06-25T21:30:00Z
 
-- [ ] ⬜ **3.8 Download Notifications**
+- [x] ✅ **3.8 Download Notifications**
   - Progress notification (low importance, ongoing)
   - Complete notification
   - Failed notification (high importance)
   - Notification channels setup
-  - _Completed:_ —
+  - _Completed:_ 2026-06-25T21:30:00Z
 
-- [ ] ⬜ **3.9 Wi-Fi Only Enforcement**
+- [x] ✅ **3.9 Wi-Fi Only Enforcement**
   - Check before download start
   - Listen connectivity changes, auto-pause
   - Warning notification
-  - _Completed:_ —
+  - _Completed:_ 2026-06-25T21:30:00Z
 
 ---
 
@@ -438,8 +438,8 @@
 | Phase | Total Tasks | Done | Status |
 |-------|------------|------|--------|
 | 1 — Foundation | 15 | 15 | ✅ Done |
-| 2 — Core Loop | 10 | 0 | ⬜ Not Started |
-| 3 — Download Engine | 9 | 0 | ⬜ Not Started |
+| 2 — Core Loop | 10 | 10 | ✅ Done |
+| 3 — Download Engine | 9 | 9 | ✅ Done |
 | 4 — Media Processing | 5 | 0 | ⬜ Not Started |
 | 5 — Persistence & History | 4 | 0 | ⬜ Not Started |
 | 6 — Android Integration | 5 | 0 | ⬜ Not Started |
