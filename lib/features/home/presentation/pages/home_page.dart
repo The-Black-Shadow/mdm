@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+
 
 import 'package:mdm/core/constants/app_constants.dart';
 import 'package:mdm/core/constants/route_constants.dart';
@@ -69,7 +69,7 @@ class _HomeViewState extends State<_HomeView> {
         title: const Text(AppConstants.appName, style: TextStyle(fontWeight: FontWeight.bold)),
         actions: [
           IconButton(
-            icon: const Icon(LucideIcons.search),
+            icon: const Icon(Icons.search),
             onPressed: () => context.pushNamed(RouteConstants.search),
             tooltip: 'Search',
           ),
@@ -81,7 +81,7 @@ class _HomeViewState extends State<_HomeView> {
                     alignment: Alignment.center,
                     children: [
                       IconButton(
-                        icon: const Icon(LucideIcons.download),
+                        icon: const Icon(Icons.download),
                         onPressed: () => context.pushNamed(RouteConstants.downloads),
                         tooltip: 'Downloads',
                       ),
@@ -105,14 +105,14 @@ class _HomeViewState extends State<_HomeView> {
                   );
                 },
                 orElse: () => IconButton(
-                  icon: const Icon(LucideIcons.download),
+                  icon: const Icon(Icons.download),
                   onPressed: () => context.pushNamed(RouteConstants.downloads),
                 ),
               );
             },
           ),
           IconButton(
-            icon: const Icon(LucideIcons.settings),
+            icon: const Icon(Icons.settings),
             onPressed: () => context.pushNamed(RouteConstants.settings),
             tooltip: 'Settings',
           ),
@@ -209,11 +209,11 @@ class _HomeViewState extends State<_HomeView> {
       color: context.colorScheme.primaryContainer,
       margin: const EdgeInsets.only(bottom: AppSpacing.lg),
       child: ListTile(
-        leading: Icon(LucideIcons.clipboard, color: context.colorScheme.primary),
+        leading: Icon(Icons.content_paste, color: context.colorScheme.primary),
         title: const Text('Found YouTube URL in clipboard', style: TextStyle(fontWeight: FontWeight.w600)),
         subtitle: Text(url, maxLines: 1, overflow: TextOverflow.ellipsis),
         trailing: IconButton(
-          icon: const Icon(LucideIcons.x),
+          icon: const Icon(Icons.close),
           onPressed: () => context.read<HomeCubit>().clearClipboardUrl(),
         ),
         onTap: () {
@@ -249,7 +249,7 @@ class _HomeViewState extends State<_HomeView> {
                     focusNode: _focusNode,
                     decoration: InputDecoration(
                       hintText: 'Paste YouTube link here...',
-                      prefixIcon: const Icon(LucideIcons.link),
+                      prefixIcon: const Icon(Icons.link),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(AppSpacing.md),
                       ),
@@ -267,7 +267,7 @@ class _HomeViewState extends State<_HomeView> {
                       borderRadius: BorderRadius.circular(AppSpacing.md),
                     ),
                   ),
-                  child: const Icon(LucideIcons.arrowRight),
+                  child: const Icon(Icons.arrow_forward),
                 ),
               ],
             ),
@@ -280,11 +280,11 @@ class _HomeViewState extends State<_HomeView> {
   Widget _buildQuickStats(BuildContext context, int count, int size, int active) {
     return Row(
       children: [
-        Expanded(child: _buildStatCard(context, 'Total', count.toString(), LucideIcons.checkCircle)),
+        Expanded(child: _buildStatCard(context, 'Total', count.toString(), Icons.check_circle_outline)),
         const SizedBox(width: AppSpacing.md),
-        Expanded(child: _buildStatCard(context, 'Size', size.formatBytes, LucideIcons.hardDrive)),
+        Expanded(child: _buildStatCard(context, 'Size', size.formatBytes, Icons.storage)),
         const SizedBox(width: AppSpacing.md),
-        Expanded(child: _buildStatCard(context, 'Active', active.toString(), LucideIcons.activity)),
+        Expanded(child: _buildStatCard(context, 'Active', active.toString(), Icons.show_chart)),
       ],
     );
   }

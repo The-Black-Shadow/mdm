@@ -27,14 +27,14 @@ class AppRouter {
       // Home route
       GoRoute(
         path: RouteConstants.home,
-        name: 'home',
+        name: RouteConstants.home,
         builder: (context, state) => const HomePage(),
       ),
 
       // Metadata route — receives YouTube URL via extra
       GoRoute(
         path: RouteConstants.metadata,
-        name: 'metadata',
+        name: RouteConstants.metadata,
         builder: (context, state) {
           final url = state.extra as String? ?? '';
           return BlocProvider(
@@ -49,7 +49,7 @@ class AppRouter {
       // Quality selection route — receives metadata + audioOnly flag via extra
       GoRoute(
         path: RouteConstants.qualitySelection,
-        name: 'qualitySelection',
+        name: RouteConstants.qualitySelection,
         builder: (context, state) {
           final extra = state.extra as Map<String, dynamic>? ?? {};
           final metadata = extra['metadata'] as VideoMetadata;
@@ -61,48 +61,42 @@ class AppRouter {
         },
       ),
 
-      // Downloads route
       GoRoute(
         path: RouteConstants.downloads,
-        name: 'downloads',
+        name: RouteConstants.downloads,
         builder: (context, state) => const DownloadsPage(),
       ),
 
-      // Player route
       GoRoute(
         path: RouteConstants.player,
-        name: 'player',
+        name: RouteConstants.player,
         builder: (context, state) {
           final filePath = state.extra as String? ?? '';
           return PlayerPage(filePath: filePath);
         },
       ),
 
-      // History route
       GoRoute(
         path: RouteConstants.history,
-        name: 'history',
+        name: RouteConstants.history,
         builder: (context, state) => const HistoryPage(),
       ),
 
-      // Favorites route
       GoRoute(
         path: RouteConstants.favorites,
-        name: 'favorites',
+        name: RouteConstants.favorites,
         builder: (context, state) => const FavoritesPage(),
       ),
 
-      // Settings route
       GoRoute(
         path: RouteConstants.settings,
-        name: 'settings',
+        name: RouteConstants.settings,
         builder: (context, state) => const _StubPage(name: 'Settings'),
       ),
 
-      // Search route
       GoRoute(
         path: RouteConstants.search,
-        name: 'search',
+        name: RouteConstants.search,
         builder: (context, state) => const SearchPage(),
       ),
     ],
