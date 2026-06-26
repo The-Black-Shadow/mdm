@@ -1,4 +1,5 @@
 // >>> FfmpegService =======================
+import 'dart:async';
 import 'dart:io';
 
 import 'package:ffmpeg_kit_flutter_new/ffmpeg_kit.dart';
@@ -130,10 +131,13 @@ class FfmpegService implements MediaProcessor {
 
       AppLogger.i('Starting FFmpeg operation: $operationName\nCommand: $command');
 
+      final completer = Completer<void>();
+
       final session = await FFmpegKit.executeAsync(
         command,
         (session) async {
-          // Completed
+          // Session completed — resolve the completer
+          completer.complete();
         },
         (log) {
           // You could log this if debugging FFmpeg issues
@@ -148,7 +152,9 @@ class FfmpegService implements MediaProcessor {
         },
       );
 
-      await session.getReturnCode(); // wait for completion
+      // Wait for FFmpeg to actually finish
+      await completer.future;
+
       final returnCode = await session.getReturnCode();
       final failStackTrace = await session.getFailStackTrace();
 
