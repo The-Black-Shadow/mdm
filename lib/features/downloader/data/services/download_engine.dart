@@ -6,6 +6,7 @@ import 'package:injectable/injectable.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 import 'package:mdm/core/helpers/file_helper.dart';
 import 'package:mdm/core/utils/app_logger.dart';
+import 'package:mdm/features/downloader/data/services/chunked_downloader.dart';
 
 import 'package:mdm/features/downloader/domain/entities/download_task.dart';
 import 'package:mdm/shared/enums/download_status.dart';
@@ -15,14 +16,7 @@ import 'package:mdm/core/services/notification_service.dart';
 
 @singleton
 class DownloadEngine {
-  final Dio _dio = Dio(
-    BaseOptions(
-      headers: {
-        'User-Agent':
-            'com.google.android.apps.youtube.vr.oculus/1.57.29 (Linux; U; Android 12; eureka-user Build/SQ3A.220605.009.A1) gzip',
-      },
-    ),
-  );
+  final ChunkedDownloader _chunkedDownloader = ChunkedDownloader();
   final MediaProcessor _mediaProcessor;
   final NotificationService _notificationService;
   final Map<String, CancelToken> _cancelTokens = {};
@@ -263,30 +257,15 @@ class DownloadEngine {
     required double baseProgress,
     required double progressWeight,
   }) async {
-    final stopwatch = Stopwatch()..start();
-    int previousReceived = 0;
-    int speedCalcTime = 0;
-    int speedBytesPerSecond = 0;
-
-    await _dio.download(
-      url,
-      outputPath,
+    await _chunkedDownloader.download(
+      url: url,
+      outputPath: outputPath,
       cancelToken: cancelToken,
-      onReceiveProgress: (received, total) {
-        if (total != -1) {
+      onProgress: (received, total, speedBps) {
+        if (total > 0) {
           final now = DateTime.now();
           final lastTime =
               _lastEmitTime[task.id] ?? DateTime.fromMillisecondsSinceEpoch(0);
-
-          final int elapsedSinceCalc =
-              stopwatch.elapsedMilliseconds - speedCalcTime;
-          if (elapsedSinceCalc >= 1000) {
-            speedBytesPerSecond =
-                ((received - previousReceived) / (elapsedSinceCalc / 1000))
-                    .round();
-            previousReceived = received;
-            speedCalcTime = stopwatch.elapsedMilliseconds;
-          }
 
           if (now.difference(lastTime).inMilliseconds >= 250 ||
               received == total) {
@@ -299,9 +278,9 @@ class DownloadEngine {
             _emitProgress(
               task,
               overallProgress,
-              speedBytesPerSecond,
+              speedBps,
               remainingBytes,
-              false, // isCompleted is handled at the very end
+              false,
             );
           }
         }

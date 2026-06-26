@@ -12,6 +12,7 @@ abstract class AppConstants {
   static const int downloadBufferSize = 8192; // 8 KB
   static const int maxRetryAttempts = 3;
   static const int retryDelaySeconds = 2;
+  static const int downloadMaxConnections = 8;
 
   // Timeouts (milliseconds)
   static const int connectionTimeout = 30000;
