@@ -3,6 +3,8 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import 'package:youtube_explode_dart/youtube_explode_dart.dart';
+import 'package:mdm/core/helpers/file_helper.dart';
 import 'package:mdm/core/utils/app_logger.dart';
 
 import 'package:mdm/features/downloader/domain/entities/download_task.dart';
@@ -13,7 +15,14 @@ import 'package:mdm/core/services/notification_service.dart';
 
 @singleton
 class DownloadEngine {
-  final Dio _dio = Dio();
+  final Dio _dio = Dio(
+    BaseOptions(
+      headers: {
+        'User-Agent':
+            'com.google.android.apps.youtube.vr.oculus/1.57.29 (Linux; U; Android 12; eureka-user Build/SQ3A.220605.009.A1) gzip',
+      },
+    ),
+  );
   final MediaProcessor _mediaProcessor;
   final NotificationService _notificationService;
   final Map<String, CancelToken> _cancelTokens = {};
@@ -26,21 +35,51 @@ class DownloadEngine {
 
   DownloadEngine(this._mediaProcessor, this._notificationService);
 
-  Future<void> start(DownloadTask task) async {
+  Future<void> start(DownloadTask originalTask) async {
+    final yt = YoutubeExplode();
     try {
       final cancelToken = CancelToken();
-      _cancelTokens[task.id] = cancelToken;
+      _cancelTokens[originalTask.id] = cancelToken;
 
-      AppLogger.i('Starting download for task: ${task.id}');
+      AppLogger.i('Starting download for task: ${originalTask.id}');
+
+      // Resolve full output path if only a filename was provided
+      var resolvedOutputPath = originalTask.outputPath;
+      if (!resolvedOutputPath.startsWith('/')) {
+        final downloadDir = await FileHelper.getDownloadDirectory();
+        resolvedOutputPath = '${downloadDir.path}/$resolvedOutputPath';
+      }
+      final task = originalTask.copyWith(outputPath: resolvedOutputPath);
 
       final downloadTask = task.copyWith(status: DownloadStatus.downloading);
       _progressController.add(downloadTask);
 
+      // Resolve fresh stream URLs to avoid 403 (expiration / IP mismatch)
+      AppLogger.d('Refreshing stream URLs for video: ${task.videoId}');
+      final manifest = await yt.videos.streamsClient.getManifest(
+        task.videoId,
+        ytClients: [YoutubeApiClient.androidVr],
+      );
+
+      final videoStream = manifest.streams.firstWhere(
+        (s) => s.tag.toString() == task.selectedStream.itag,
+        orElse: () => throw Exception(
+          'Selected stream with itag ${task.selectedStream.itag} not found',
+        ),
+      );
+      final resolvedVideoUrl = videoStream.url.toString();
+
+      String? resolvedAudioUrl;
+      if (task.audioUrl != null && manifest.audioOnly.isNotEmpty) {
+        final audioStream = manifest.audioOnly.withHighestBitrate();
+        resolvedAudioUrl = audioStream.url.toString();
+      }
+
       if (task.extractAudio) {
         // High-quality audio extraction
-        final targetUrl = task.audioUrl ?? task.videoUrl;
+        final targetUrl = resolvedAudioUrl ?? resolvedVideoUrl;
         final tempPath = '${task.outputPath}.tmp';
-        
+
         await _downloadPart(
           url: targetUrl,
           outputPath: tempPath,
@@ -71,15 +110,15 @@ class DownloadEngine {
         }
 
         _emitProgress(task, 1.0, 0, 0, true);
-        
-      } else if (task.selectedStream.requiresMerge && task.audioUrl != null) {
+      } else if (task.selectedStream.requiresMerge &&
+          resolvedAudioUrl != null) {
         // High-quality flow: video -> audio -> merge
         final videoTempPath = '${task.outputPath}.vid.tmp';
         final audioTempPath = '${task.outputPath}.aud.tmp';
 
         // 1. Download Video (0% - 50%)
         await _downloadPart(
-          url: task.videoUrl,
+          url: resolvedVideoUrl,
           outputPath: videoTempPath,
           cancelToken: cancelToken,
           task: task,
@@ -89,7 +128,7 @@ class DownloadEngine {
 
         // 2. Download Audio (50% - 75%)
         await _downloadPart(
-          url: task.audioUrl!,
+          url: resolvedAudioUrl,
           outputPath: audioTempPath,
           cancelToken: cancelToken,
           task: task,
@@ -99,7 +138,7 @@ class DownloadEngine {
 
         // 3. Merge (75% - 100%)
         _progressController.add(task.copyWith(status: DownloadStatus.merging));
-        
+
         final mergeResult = await _mediaProcessor.mergeVideoAndAudio(
           videoFilePath: videoTempPath,
           audioFilePath: audioTempPath,
@@ -125,19 +164,19 @@ class DownloadEngine {
         }
 
         _emitProgress(task, 1.0, 0, 0, true);
-
-      } else if (task.outputPath.endsWith('.mp4') && task.selectedStream.container == 'webm') {
+      } else if (task.outputPath.endsWith('.mp4') &&
+          task.selectedStream.container == 'webm') {
         // WebM to MP4 conversion
         final tempPath = '${task.outputPath}.tmp';
         await _downloadPart(
-          url: task.videoUrl,
+          url: resolvedVideoUrl,
           outputPath: tempPath,
           cancelToken: cancelToken,
           task: task,
           baseProgress: 0.0,
           progressWeight: 0.75,
         );
-        
+
         _progressController.add(task.copyWith(status: DownloadStatus.merging));
         final convertResult = await _mediaProcessor.convertToMp4(
           inputFilePath: tempPath,
@@ -146,7 +185,7 @@ class DownloadEngine {
             _emitProgress(task, 0.75 + (ffmpegProgress * 0.25), 0, 0, false);
           },
         );
-        
+
         try {
           final tmpFile = File(tempPath);
           if (await tmpFile.exists()) await tmpFile.delete();
@@ -159,11 +198,10 @@ class DownloadEngine {
         }
 
         _emitProgress(task, 1.0, 0, 0, true);
-
       } else {
         // Normal flow (0% - 100%)
         await _downloadPart(
-          url: task.videoUrl,
+          url: resolvedVideoUrl,
           outputPath: task.outputPath,
           cancelToken: cancelToken,
           task: task,
@@ -174,27 +212,46 @@ class DownloadEngine {
       }
     } on DioException catch (e) {
       if (CancelToken.isCancel(e)) {
-        AppLogger.i('Download paused/canceled for task: ${task.id}');
-        _notificationService.cancelNotification(task.id.hashCode);
+        AppLogger.i('Download paused/canceled for task: ${originalTask.id}');
+        _notificationService.cancelNotification(originalTask.id.hashCode);
       } else {
-        AppLogger.e('Download failed for task: ${task.id}', e);
+        AppLogger.e('Download failed for task: ${originalTask.id}', e);
         _progressController.add(
-          task.copyWith(status: DownloadStatus.failed, errorMessage: e.message),
+          originalTask.copyWith(status: DownloadStatus.failed, errorMessage: e.message),
         );
-        _notificationService.showDownloadFailed(id: task.id.hashCode, title: task.title, error: e.message);
+        _notificationService.showDownloadFailed(
+          id: originalTask.id.hashCode,
+          title: originalTask.title,
+          error: e.message,
+        );
       }
-      _cancelTokens.remove(task.id);
-      _lastEmitTime.remove(task.id);
-      if (_cancelTokens.isEmpty) _notificationService.stopForegroundService(task.id.hashCode);
+      _cancelTokens.remove(originalTask.id);
+      _lastEmitTime.remove(originalTask.id);
+      if (_cancelTokens.isEmpty)
+        _notificationService.stopForegroundService(originalTask.id.hashCode);
     } catch (e, stackTrace) {
-      AppLogger.e('Unexpected error downloading task: ${task.id}', e, stackTrace);
-      _progressController.add(
-        task.copyWith(status: DownloadStatus.failed, errorMessage: e.toString()),
+      AppLogger.e(
+        'Unexpected error downloading task: ${originalTask.id}',
+        e,
+        stackTrace,
       );
-      _notificationService.showDownloadFailed(id: task.id.hashCode, title: task.title, error: e.toString());
-      _cancelTokens.remove(task.id);
-      _lastEmitTime.remove(task.id);
-      if (_cancelTokens.isEmpty) _notificationService.stopForegroundService(task.id.hashCode);
+      _progressController.add(
+        originalTask.copyWith(
+          status: DownloadStatus.failed,
+          errorMessage: e.toString(),
+        ),
+      );
+      _notificationService.showDownloadFailed(
+        id: originalTask.id.hashCode,
+        title: originalTask.title,
+        error: e.toString(),
+      );
+      _cancelTokens.remove(originalTask.id);
+      _lastEmitTime.remove(originalTask.id);
+      if (_cancelTokens.isEmpty)
+        _notificationService.stopForegroundService(originalTask.id.hashCode);
+    } finally {
+      yt.close();
     }
   }
 
@@ -218,19 +275,25 @@ class DownloadEngine {
       onReceiveProgress: (received, total) {
         if (total != -1) {
           final now = DateTime.now();
-          final lastTime = _lastEmitTime[task.id] ?? DateTime.fromMillisecondsSinceEpoch(0);
+          final lastTime =
+              _lastEmitTime[task.id] ?? DateTime.fromMillisecondsSinceEpoch(0);
 
-          final int elapsedSinceCalc = stopwatch.elapsedMilliseconds - speedCalcTime;
+          final int elapsedSinceCalc =
+              stopwatch.elapsedMilliseconds - speedCalcTime;
           if (elapsedSinceCalc >= 1000) {
-            speedBytesPerSecond = ((received - previousReceived) / (elapsedSinceCalc / 1000)).round();
+            speedBytesPerSecond =
+                ((received - previousReceived) / (elapsedSinceCalc / 1000))
+                    .round();
             previousReceived = received;
             speedCalcTime = stopwatch.elapsedMilliseconds;
           }
 
-          if (now.difference(lastTime).inMilliseconds >= 250 || received == total) {
+          if (now.difference(lastTime).inMilliseconds >= 250 ||
+              received == total) {
             _lastEmitTime[task.id] = now;
             final partProgress = received / total;
-            final overallProgress = baseProgress + (partProgress * progressWeight);
+            final overallProgress =
+                baseProgress + (partProgress * progressWeight);
             final remainingBytes = total - received;
 
             _emitProgress(
@@ -253,11 +316,15 @@ class DownloadEngine {
     int remainingBytes,
     bool isCompleted,
   ) {
-    final etaSeconds = speedBytesPerSecond > 0 ? remainingBytes / speedBytesPerSecond : 0;
+    final etaSeconds = speedBytesPerSecond > 0
+        ? remainingBytes / speedBytesPerSecond
+        : 0;
     final eta = Duration(seconds: etaSeconds.round());
 
     final updatedTask = task.copyWith(
-      status: isCompleted ? DownloadStatus.completed : DownloadStatus.downloading,
+      status: isCompleted
+          ? DownloadStatus.completed
+          : DownloadStatus.downloading,
       progress: overallProgress,
       speedBytesPerSecond: speedBytesPerSecond,
       remainingBytes: remainingBytes,
@@ -273,13 +340,13 @@ class DownloadEngine {
       _cancelTokens.remove(task.id);
       _lastEmitTime.remove(task.id);
       AppLogger.i('Completed download for task: ${task.id}');
-      
+
       if (_cancelTokens.isEmpty) {
         _notificationService.stopForegroundService(notifId);
       } else {
         _notificationService.cancelNotification(notifId);
       }
-      
+
       _notificationService.showDownloadComplete(id: notifId, title: task.title);
     } else {
       _notificationService.showDownloadProgress(
@@ -297,7 +364,8 @@ class DownloadEngine {
     _cancelTokens.remove(taskId);
     _lastEmitTime.remove(taskId);
     _notificationService.cancelNotification(taskId.hashCode);
-    if (_cancelTokens.isEmpty) _notificationService.stopForegroundService(taskId.hashCode);
+    if (_cancelTokens.isEmpty)
+      _notificationService.stopForegroundService(taskId.hashCode);
   }
 
   Future<void> cancel(String taskId) async {
@@ -306,7 +374,9 @@ class DownloadEngine {
     _cancelTokens.remove(taskId);
     _lastEmitTime.remove(taskId);
     _notificationService.cancelNotification(taskId.hashCode);
-    if (_cancelTokens.isEmpty) _notificationService.stopForegroundService(taskId.hashCode);
+    if (_cancelTokens.isEmpty)
+      _notificationService.stopForegroundService(taskId.hashCode);
   }
 }
+
 // <<< DownloadEngine =======================

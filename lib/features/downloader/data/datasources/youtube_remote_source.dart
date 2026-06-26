@@ -19,7 +19,10 @@ class YoutubeRemoteSource {
       AppLogger.d('Fetching video metadata for: $url');
 
       final video = await yt.videos.get(url);
-      final manifest = await yt.videos.streamsClient.getManifest(video.id);
+      final manifest = await yt.videos.streamsClient.getManifest(
+        video.id,
+        ytClients: [YoutubeApiClient.androidVr],
+      );
 
       AppLogger.d('Retrieved ${manifest.streams.length} streams for: ${video.title}');
 
